@@ -1,20 +1,14 @@
 <template>
   <div>
-    <el-container>
+    <el-container class="header">
       <el-header>
-        <span>{{userName}} 修改密码</span>
+        <span>{{userName}}  修改密码</span>
       </el-header>
     </el-container>
 
-    <el-container>
+    <el-container class="main">
       <el-aside>
-        <el-menu default-active=4 router="true">
-          <el-menu-item index=1 v-on:click="goToTeacherHead">首页</el-menu-item>
-          <el-menu-item index=2 v-on:click="goToBuildCourse">开设课程</el-menu-item>
-          <el-menu-item index=3 v-on:click="goToTeacherCourse">查看课程</el-menu-item>
-          <el-menu-item index=4 v-on:click="goToTeacherChange">修改密码</el-menu-item>
-          <el-menu-item index=5 v-on:click="goToHelloWorld">退出登录</el-menu-item>
-        </el-menu>
+        <StudentNav></StudentNav>
       </el-aside>
       <el-main>
         <el-form label-width="100px">
@@ -39,14 +33,17 @@
             </el-col>
           </el-form-item>
         </el-form>
+
       </el-main>
     </el-container>
   </div>
 </template>
 
 <script>
+import StudentNav from '../StudentNav'
 export default {
-  name: 'TeacherChange',
+  name: 'StudentChange',
+  components: {StudentNav},
   data: function () {
     return {
       userName: '',
@@ -56,7 +53,7 @@ export default {
     }
   },
   mounted: function () {
-    this.userName = this.$route.params.userName
+    this.userName = this.cookie.getCookie('userName')
   },
   methods: {
     changePassWord: function () {
@@ -65,7 +62,7 @@ export default {
         alert('密码不能为空')
       } else {
         this.$http.request({
-          url: that.$url + 'TeacherChange/',
+          url: that.$url + 'StudentChange/',
           method: 'get',
           params: {
             userName: that.userName,
@@ -79,7 +76,7 @@ export default {
           if (that.status === 0) {
             alert('修改成功')
             that.$router.push({
-              name: 'TeacherLogin',
+              name: 'StudentLogin',
               params: {
                 userName: that.userName
               }
@@ -95,43 +92,6 @@ export default {
           console.log(error)
         })
       }
-    },
-    goToTeacherHead: function () {
-      this.$router.push({
-        name: 'TeacherHead',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToBuildCourse: function () {
-      this.$router.push({
-        name: 'BuildCourse',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToTeacherCourse: function () {
-      this.$router.push({
-        name: 'TeacherCourse',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToTeacherChange: function () {
-      this.$router.push({
-        name: 'TeacherChange',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToHelloWorld: function () {
-      this.$router.push({
-        name: 'HelloWorld'
-      })
     }
   }
 }

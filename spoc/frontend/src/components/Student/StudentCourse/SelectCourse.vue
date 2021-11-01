@@ -1,25 +1,20 @@
 <template>
-  <div>
-    <el-container>
+  <div class="background">
+    <el-container class="header">
       <el-header>
         <span>{{userName}}  学生选课</span>
       </el-header>
     </el-container>
 
-    <el-container>
+    <el-container class="main">
       <el-aside>
-        <el-menu default-active=2 router="true">
-          <el-menu-item index=1 v-on:click="goToStudentHead">首页</el-menu-item>
-          <el-menu-item index=2 v-on:click="goToSelectCourse">学生选课</el-menu-item>
-          <el-menu-item index=3 v-on:click="goToStudentCourse">我的课程</el-menu-item>
-          <el-menu-item index=4 v-on:click="goToStudentChange">修改密码</el-menu-item>
-          <el-menu-item index=5 v-on:click="goToHelloWorld">退出登录</el-menu-item>
-        </el-menu>
+        <StudentNav></StudentNav>
       </el-aside>
       <el-main>
         <el-table :data="courseList">
           <el-table-column label="课程ID" prop="id"></el-table-column>
           <el-table-column label="课程名称" prop="name"></el-table-column>
+          <el-table-column label="课程材料" prop="materialIdString"></el-table-column>
           <el-table-column label="选课"> <template slot-scope="scope">
         <el-button v-on:click="selectCourse(scope.$index)" type="primary" plain="true">选课</el-button>
       </template></el-table-column>
@@ -29,37 +24,23 @@
   </div>
 </template>
 
-<style>
-  .el-header {
-    text-align: center;
-    font-size: 24px;
-    background-color: #b4f5ff;
-    color: #333;
-    line-height: 60px;
-  }
-  .el-aside {
-    width: 20%;
-    text-align: center;
-  }
-  .el-menu-item {
-    font-size: 18px;
-  }
-  .el-main {
-    width: 80%;
-  }
-</style>
-
 <script>
+import StudentNav from '../StudentNav'
 export default {
   name: 'SelectCourse',
+  components: {StudentNav},
   data: function () {
     return {
       userName: '',
-      courseList: []
+      courseList: [{
+        id: '1',
+        name: '前端测试课程',
+        materialIdString: '1,2'
+      }]
     }
   },
   mounted: function () {
-    this.userName = this.$route.params.userName
+    this.userName = this.cookie.getCookie('userName')
     this.getCourseList()
   },
   methods: {
@@ -94,43 +75,6 @@ export default {
           alert('已选择该课程')
         } else {
           alert('!')
-        }
-      })
-    },
-    goToStudentHead: function () {
-      this.$router.push({
-        name: 'StudentHead',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToSelectCourse: function () {
-      this.$router.push({
-        name: 'SelectCourse',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToHelloWorld: function () {
-      this.$router.push({
-        name: 'HelloWorld'
-      })
-    },
-    goToStudentChange: function () {
-      this.$router.push({
-        name: 'StudentChange',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToStudentCourse: function () {
-      this.$router.push({
-        name: 'StudentCourse',
-        params: {
-          userName: this.userName
         }
       })
     }

@@ -1,20 +1,14 @@
 <template>
-  <div>
-    <el-container>
+  <div class="background">
+    <el-container class="header">
       <el-header>
-        <span>{{userName}}  修改密码</span>
+        <span>{{userName}} 修改密码</span>
       </el-header>
     </el-container>
 
-    <el-container>
+    <el-container class="main">
       <el-aside>
-        <el-menu default-active=4 router="true">
-          <el-menu-item index=1 v-on:click="goToStudentHead">首页</el-menu-item>
-          <el-menu-item index=2 v-on:click="goToSelectCourse">学生选课</el-menu-item>
-          <el-menu-item index=3 v-on:click="goToStudentCourse">我的课程</el-menu-item>
-          <el-menu-item index=4 v-on:click="goToStudentChange">修改密码</el-menu-item>
-          <el-menu-item index=5 v-on:click="goToHelloWorld">退出登录</el-menu-item>
-        </el-menu>
+        <TeacherNav></TeacherNav>
       </el-aside>
       <el-main>
         <el-form label-width="100px">
@@ -39,34 +33,16 @@
             </el-col>
           </el-form-item>
         </el-form>
-
       </el-main>
     </el-container>
   </div>
 </template>
 
-<style>
-  .el-header {
-    text-align: center;
-    font-size: 24px;
-    background-color: #b4f5ff;
-    color: #333;
-    line-height: 60px;
-  }
-  .el-aside {
-    width: 20%;
-    text-align: center;
-  }
-  .el-menu-item {
-    font-size: 18px;
-  }
-  .el-main {
-  }
-</style>
-
 <script>
+import TeacherNav from '../TeacherNav'
 export default {
-  name: 'StudentChange',
+  name: 'TeacherChange',
+  components: {TeacherNav},
   data: function () {
     return {
       userName: '',
@@ -76,7 +52,7 @@ export default {
     }
   },
   mounted: function () {
-    this.userName = this.$route.params.userName
+    this.userName = this.cookie.getCookie('userName')
   },
   methods: {
     changePassWord: function () {
@@ -85,7 +61,7 @@ export default {
         alert('密码不能为空')
       } else {
         this.$http.request({
-          url: that.$url + 'StudentChange/',
+          url: that.$url + 'TeacherChange/',
           method: 'get',
           params: {
             userName: that.userName,
@@ -99,7 +75,7 @@ export default {
           if (that.status === 0) {
             alert('修改成功')
             that.$router.push({
-              name: 'StudentLogin',
+              name: 'TeacherLogin',
               params: {
                 userName: that.userName
               }
@@ -115,48 +91,7 @@ export default {
           console.log(error)
         })
       }
-    },
-    goToStudentHead: function () {
-      this.$router.push({
-        name: 'StudentHead',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToSelectCourse: function () {
-      this.$router.push({
-        name: 'SelectCourse',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToHelloWorld: function () {
-      this.$router.push({
-        name: 'HelloWorld'
-      })
-    },
-    goToStudentChange: function () {
-      this.$router.push({
-        name: 'StudentChange',
-        params: {
-          userName: this.userName
-        }
-      })
-    },
-    goToStudentCourse: function () {
-      this.$router.push({
-        name: 'StudentCourse',
-        params: {
-          userName: this.userName
-        }
-      })
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>
