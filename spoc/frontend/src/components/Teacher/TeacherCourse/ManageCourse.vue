@@ -2,7 +2,7 @@
   <div class="background">
     <el-container class="header">
       <el-header>
-        <span>{{userName}}  管理课程</span>
+        <span>{{userNickName}}  管理课程</span>
       </el-header>
     </el-container>
 
@@ -39,15 +39,17 @@ export default {
   components: {TeacherNav},
   data: function () {
     return {
+      userNickName: '',
       userName: '',
       myCourseList: [{
         id: '1',
         name: '前端测试课程',
-        materialIdString: '11'
+        materialIdString: '资料1,资料2'
       }]
     }
   },
   mounted: function () {
+    this.userNickName = this.cookie.getCookie('userNickName')
     this.userName = this.cookie.getCookie('userName')
     this.getTeacherCourseList()
   },
@@ -72,8 +74,12 @@ export default {
       console.log(index)
       this.$router.push({
         path: '/TeacherCourse/ChangeCourse',
-        params: {
-          course: that.myCourseList[index]
+        // 这里不能使用params传递参数，详见：
+        // https://blog.csdn.net/qq_37548296/article/details/90446430
+        query: {
+          id: that.myCourseList[index].id,
+          name: that.myCourseList[index].name,
+          materialIdString: that.myCourseList[index].materialIdString
         }
       })
     },
@@ -90,9 +96,9 @@ export default {
       }).then(function (response) {
         console.log(response.data)
         if (response.data === 0) {
-          alert('停课成功')
+          that.$message.success('停课成功')
         } else {
-          alert('!')
+          that.$message.error('!')
         }
         that.getTeacherCourseList()
       }).catch(function (error) {

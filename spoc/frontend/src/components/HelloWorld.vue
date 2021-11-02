@@ -1,119 +1,130 @@
 <template>
   <div class="welcome">
       <div class="navigator">
-        <span class="head">Spoc</span>
-        <span class="reference">课程</span>
-        <span class="reference">学校</span>
-        <span class="reference">云端</span>
-        <span class="reference">更多</span>
-        <div class="buttons"><button class="buttons" @click="goToStudentLogin">学生登录</button></div>
+        <div class="navigator-left">
+          <i class="el-icon-bell"></i>
+          &nbsp;&nbsp;&nbsp;Spoc
+        </div>
+        <div class="navigator-right">
+          <el-button class="buttons" @click="goToStudentLogin">学生登录</el-button>
           <span>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
-        <div class="buttons"><button class="buttons" @click="goToTeacherLogin">教师登录</button></div>
+          <el-button class="buttons" @click="goToTeacherLogin">教师登录</el-button>
+        </div>
     </div>
       <div class="introduction">
-        <div class="class-center">
-        <p class="class-center-name">热门课程</p>
-        <ul class="class-center-id">
-          <li>工科数学分析&nbsp;<span class="sub">数学/6学分</span></li>
-          <li>C语言程序设计&nbsp;<span class="sub">计算机基础/3学分</span></li>
-          <li>Python程序设计&nbsp;<span class="sub">计算机基础/2学分</span></li>
-          <li>C++:从入门到入土&nbsp;<span class="sub">选修课/1学分</span></li>
-          <li>Spring架构分析&nbsp;<span class="sub">选修课/2学分</span></li>
-          <li>编译原理&nbsp;<span class="sub">计算机核心/4学分</span></li>
-          <li>数据库原理&nbsp;<span class="sub">计算机核心/4学分</span></li>
-        </ul>
-        </div>
-        <div class="blink-block"></div>
-        <div class="picture">
-          <img class="imgt" src="../assets/learning-hard.png" alt="photo">
-        </div>
-        <div class="blink-block"></div>
-        <div class="news">
-          <p class="class-center-name">更新新闻</p>
-          <ul class="class-center-id">
-            <li>页面二次设计<span class="sub">2021.10.6</span></li>
-            <li>使用Element UI优化<span class="sub">2021.10.6</span></li>
-          </ul>
-        </div>
+        <el-carousel height="720px">
+          <el-carousel-item v-for="(item, index) in headImg" :key="index">
+            <img :src="item.src" style="width: 100%; height: 100%;" alt="">
+            <div class="cover">
+              {{item.title}}<br>
+              <span style="font-size: 25px">{{item.subTitle}}</span>
+            </div>
+          </el-carousel-item>
+        </el-carousel>
       </div>
       <div class="line_1">
         <div class="line-1-head"><span class="div-head">其他推荐</span></div>
-        <div class="block1">
-        <span>
-          <i class="el-icon-edit"></i>
-        </span>
-        <span class="content1">三招搞定数学分析</span>
-          <p class="line-1-text"><span>优质课程推荐</span>&nbsp;&nbsp;<span class="line-1-link"><a href="">立即查看</a></span></p>
-          <p class="line-1-text"><span>学习资料获取</span>&nbsp;&nbsp;<span class="line-1-link"><a href="">抢先获得</a></span></p>
-          <p class="line-1-text"><span>加入兴趣小组</span>&nbsp;&nbsp;<span class="line-1-link"><a href="">点击加入</a></span></p>
-      </div>
-        <div class="block2">
-        <span>
-          <i class="el-icon-question"></i>
-        </span>
-        <span>&nbsp;&nbsp;</span>
-        <span class="content2">课程查询指导</span>
-          <p class="line-1-text">课程信息</p>
-          <p class="line-1-text">使用指南</p>
-          <p class="line-1-text">未完待续...</p>
-      </div>
-        <div class="block3">
-        <span>
-          <i class="el-icon-search"></i>
-        </span>
-        <span class="content3">成绩综合分析</span>
-          <p class="line-1-text">查询成绩</p>
-          <p class="line-1-text">未完待续...</p>
-      </div>
+        <br><br>
+        <div class="line-1-content">
+          <el-row>
+  <!--        <div class="block1">-->
+            <el-col span="4" offset="3">
+              <el-card>
+                <img :src="cardImg_group.src" alt="">
+                <p>{{cardImg_group.title}}</p>
+              </el-card>
+            </el-col>
+  <!--        <span>-->
+  <!--          <i class="el-icon-edit"></i>-->
+  <!--        </span>-->
+  <!--        <span class="content1">三招搞定数学分析</span>-->
+  <!--          <p class="line-1-text"><span>优质课程推荐</span>&nbsp;&nbsp;<span class="line-1-link"><a href="">立即查看</a></span></p>-->
+  <!--          <p class="line-1-text"><span>学习资料获取</span>&nbsp;&nbsp;<span class="line-1-link"><a href="">抢先获得</a></span></p>-->
+  <!--          <p class="line-1-text"><span>加入兴趣小组</span>&nbsp;&nbsp;<span class="line-1-link"><a href="">点击加入</a></span></p>-->
+  <!--      </div>-->
+  <!--        <div class="block2">-->
+            <el-col span="4" offset="3">
+              <el-card>
+                <img :src="cardImg_book.src" alt="">
+                <p>{{cardImg_book.title}}</p>
+              </el-card>
+            </el-col>
+  <!--        <span>-->
+  <!--          <i class="el-icon-question"></i>-->
+  <!--        </span>-->
+  <!--        <span>&nbsp;&nbsp;</span>-->
+  <!--        <span class="content2">课程查询指导</span>-->
+  <!--          <p class="line-1-text">课程信息</p>-->
+  <!--          <p class="line-1-text">使用指南</p>-->
+  <!--          <p class="line-1-text">未完待续...</p>-->
+  <!--      </div>-->
+  <!--        <div class="block3">-->
+            <el-col span="4" offset="3">
+              <el-card>
+                <img :src="cardImg_join.src" alt="">
+                <p>{{cardImg_join.title}}</p>
+              </el-card>
+            </el-col>
+  <!--        <span>-->
+  <!--          <i class="el-icon-search"></i>-->
+  <!--        </span>-->
+  <!--        <span class="content3">成绩综合分析</span>-->
+  <!--          <p class="line-1-text">查询成绩</p>-->
+  <!--          <p class="line-1-text">未完待续...</p>-->
+          </el-row>
+        </div>
       </div>
       <div class="line_2">
-        <div class="line-2-head"><span class="div-head">指导单位</span></div>
-        <div class="line-2-content">
-          <div class="line-2-admin">
-            <div class="left-photo">
-              <div class="imgs">
-              <img src="../assets/G.jpg" alt="fangzhou"/>
-            </div>
-              <div class="imgs">
-              <img src="../assets/O.jpg" alt="Mike-smith-rem"/>
-            </div>
-              <div class="imgs">
-              <img src="../assets/T.jpg" alt="mingx"/>
-            </div>
-            </div>
-            <div class="right-photo">
-              <div class="school1">
-               <img src="../assets/北航logo.png" alt="buaa"/>
-              </div>
-              <div class="school2">
-               <img src="../assets/北航计算机学院logo.png" alt="buaa-cs"/>
-            </div>
-            </div>
-          </div>
-          <div class="line-2-intro">
-            <div id="first_row">
-              <ol>
-                <li>这是一个怎样的网站</li>
-                <ul>
-                  <li>这是一个用于检验学习成果的小项目，主要使用语言包括<strong>JS、VUE（前端），Python（后端）</strong>，同时利用<strong>Django</strong>框架进行交互</li>
-                  <li>这个网站提供后台数据库进行支持。其中利用<Strong>MySQL进行数据的操作和保存</Strong></li>
-                  <li>这个网站是开源的，您可以在github中找到源文件</li>
-                  <li>未完待续...</li>
-                </ul>
-                <li>您能在这里看到什么</li>
-                <ul>
-                  <li>学生互动平台和教师平台——在小组中展现特色</li>
-                  <li>多样的课程——多样的评价——多样的学习资料</li>
-                  <li>未完待续...</li>
-                  </ul>
-                <li>您需要如何操作</li>
-                <ul>
-                  <li>只需要点击对应的按钮，就能完成你需要的操作</li>
-                  <li>未完待续....</li>
-                </ul>
-              </ol>
-        </div>
-          </div>
+        <div class="line-2-head"><span class="div-head">关于我们</span></div>
+<!--        <div class="line-2-content">-->
+<!--          <div class="line-2-admin">-->
+<!--            <div class="left-photo">-->
+<!--              <div class="imgs">-->
+<!--              <img src="../assets/img/G.jpg" alt="fangzhou"/>-->
+<!--            </div>-->
+<!--              <div class="imgs">-->
+<!--              <img src="../assets/img/O.jpg" alt="Mike-smith-rem"/>-->
+<!--            </div>-->
+<!--              <div class="imgs">-->
+<!--              <img src="../assets/img/T.jpg" alt="mingx"/>-->
+<!--            </div>-->
+<!--            </div>-->
+<!--            <div class="right-photo">-->
+<!--              <div class="school1">-->
+<!--               <img src="../assets/img/北航logo.png" alt="buaa"/>-->
+<!--              </div>-->
+<!--              <div class="school2">-->
+<!--               <img src="../assets/img/北航计算机学院logo.png" alt="buaa-cs"/>-->
+<!--            </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="line-2-intro">-->
+<!--            <div id="first_row">-->
+<!--              <ol>-->
+<!--                <li>这是一个怎样的网站</li>-->
+<!--                <ul>-->
+<!--                  <li>这是一个用于检验学习成果的小项目，主要使用语言包括<strong>JS、VUE（前端），Python（后端）</strong>，同时利用<strong>Django</strong>框架进行交互</li>-->
+<!--                  <li>这个网站提供后台数据库进行支持。其中利用<Strong>MySQL进行数据的操作和保存</Strong></li>-->
+<!--                  <li>这个网站是开源的，您可以在github中找到源文件</li>-->
+<!--                  <li>未完待续...</li>-->
+<!--                </ul>-->
+<!--                <li>您能在这里看到什么</li>-->
+<!--                <ul>-->
+<!--                  <li>学生互动平台和教师平台——在小组中展现特色</li>-->
+<!--                  <li>多样的课程——多样的评价——多样的学习资料</li>-->
+<!--                  <li>未完待续...</li>-->
+<!--                  </ul>-->
+<!--                <li>您需要如何操作</li>-->
+<!--                <ul>-->
+<!--                  <li>只需要点击对应的按钮，就能完成你需要的操作</li>-->
+<!--                  <li>未完待续....</li>-->
+<!--                </ul>-->
+<!--              </ol>-->
+<!--        </div>-->
+<!--          </div>-->
+<!--        </div>-->
+        <div>
+
         </div>
     </div>
       <div class="copyright">
@@ -143,7 +154,50 @@
 </template>
 
 <script>
+import technology from '../assets/img/technology.jpg'
+import book from '../assets/img/book.jpg'
+import Computer from '../assets/img/Computer.jpg'
+import cardBook from '../assets/img/300-240-book.png'
+import cardJoin from '../assets/img/300-240-add.jpg'
+import cardGroup from '../assets/img/300-240-group.jpg'
+
 export default {
+  data: function () {
+    return {
+      headImg: [
+        {
+          'title': '数据集成平台',
+          'subTitle': 'Data Integration Platform',
+          'src': technology
+        },
+        {
+          'title': '更好的学习体验',
+          'subTitle': 'Better Study Experience',
+          'src': book
+        },
+        {
+          'title': '合作与共享',
+          'subTitle': 'Corporation and Sharing',
+          'src': Computer
+        }
+      ],
+      cardImg_group: {
+        'id': 'group',
+        'title': '小组生活',
+        'src': cardGroup
+      },
+      cardImg_join: {
+        'id': 'join',
+        'title': '加入我们',
+        'src': cardJoin
+      },
+      cardImg_book: {
+        'id': 'book',
+        'title': '资料查询',
+        'src': cardBook
+      }
+    }
+  },
   methods: {
     goToStudentLogin () {
       this.$router.push({
@@ -160,123 +214,70 @@ export default {
 </script>
 
 <style scoped>
-a{
-    text-decoration: none;
-    color: deepskyblue;
-  }
-  .welcome{
-    margin: 0;
-    padding: 0;
-    height: auto;
-    width: auto;
-    background-color: white;
-    background-image: linear-gradient(0deg, wheat 0%, white 50%);
-  }
   .navigator{
-    height: 60px;
-    border: 3px hidden;
+    height: 80px;
+    width: 100%;
     background-color: whitesmoke;
-    text-align: center;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-bottom: 20px;
   }
-  .graduation_cap{
-    margin-top: 0.5%;
-    font-size: 30px;
-  }
-  .head{
-    margin-top: 30px;
-    font-size: 30px;
+  .navigator-left{
+    font-size: 40px;
+    display: inline-flex;
     font-family: '华文仿宋', serif;
-    margin-right: 60px;
+    float: left;
+    margin-left: 5%;
+    margin-top: 1%;
   }
-  .reference{
-    margin-top: 10%;
-    margin-right: 40px;
-    font-size: 16px;
-  }
-  .reference :hover{
-    background-color: green;
+  .navigator-right{
+    align-self: center;
+    display: inline-flex;
+    float: right;
+    margin-right: 5%;
+    margin-top: 1%;
   }
   .buttons{
-    border-radius: 10px;
-    border-style: none;
-    border-width: 0;
-    box-shadow: none;
-    background-color: yellowgreen;
-    color: #ffffff;
-    padding: 0;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    height: 50px;
-    width: 80px;
-    font-size: 16px;
-  }
-  .buttons :hover{
-    text-decoration: underline;
-    cursor: pointer;
+    display: inline-flex;
   }
   .introduction{
     margin-top: 20px;
     margin-left: 100px;
     margin-right: 100px;
     padding: 0;
-    height: 300px;
+    height: 720px;
     border: lightblue 1px hidden;
     background-color: ghostwhite;
     overflow: hidden;
   }
-  .class-center{
-    float: left;
-    height: 260px;
-    width: 25%;
-    padding: 10px;
-    margin: 10px;
-    border: 1px white solid;
-    list-style-type: none;
-    line-height: 24px;
-    text-align: left;
-    background-color: white;
-    overflow: hidden;
-  }
-  .blink-block{
-    width: 3%;
-    height: 250px;
-    float: left;
-  }
-  .class-center-name{
-    font-family: "微软雅黑",serif;
-    font-size: 20px;
-    margin-left: 10px;
-    padding-left: 10px;
-  }
-  .sub{
-    font-family: "华文仿宋", serif;
-    font-size: 18px;
-    float: right;
-  }
-  .picture{
-    margin: 10px;
-    float: left;
-    width: 35%;
-  }
-  .imgt{
+  .cover{
+    position:absolute;
     width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    z-index: 100;
+    text-align: center;
+    top:0;
+    color: white;
+    font-size: 40px;
+    line-height: 50px;
+    margin-right: 20px;
+    padding-top: 300px;
+}
+  .line_1{
+    margin-top: 50px;
+    height: 400px;
+    width: inherit;
+    margin-left: 50px;
+    margin-right: 50px;
   }
-  .news{
-    float: right;
-    height: 260px;
-    width: 25%;
-    padding: 10px;
-    margin: 10px;
-    border: 1px white solid;
-    list-style-type: none;
-    line-height: 24px;
-    text-align: left;
-    background-color: white;
-    overflow: hidden;
+  .block1, .block2, .block3{
+    float: left;
+    margin-left: 10%;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    width: 20%;
+    height: 70%;
+    border: 1px whitesmoke solid;
+    border-radius: 3px;
+    background: linear-gradient(2deg, ghostwhite 1%, whitesmoke 20%);
   }
   .line-2-content{
     width: 100%;
@@ -343,19 +344,6 @@ a{
     margin-left: 5%;
     margin-right: 5%;
   }
-  ul{
-    font-size: 12px;
-    text-align: left;
-    list-style: linear-gradient(30deg, darkgrey 10%, darkcyan 50%, darkslategrey 40%);
-    line-height: 25px;
-  }
-  ol {
-    font-size: 15px;
-    text-align: left;
-    line-height: 45px;
-    list-style: none;
-    color: black;
-  }
   .line-1-text{
     margin-left: 20%;
     margin-top: 10%;
@@ -385,13 +373,6 @@ a{
   .links{
     font-size: 12px;
   }
-  .line_1{
-    margin-top: 50px;
-    height: 400px;
-    width: inherit;
-    margin-left: 50px;
-    margin-right: 50px;
-  }
   .line_2{
     margin-top: 50px;
     height: 600px;
@@ -411,23 +392,6 @@ a{
     float: left;
     margin-left: 30px;
     margin-top: 10px;
-  }
-  .block1, .block2, .block3{
-    float: left;
-    margin-left: 10%;
-    margin-top: 40px;
-    margin-bottom: 40px;
-    width: 20%;
-    height: 70%;
-    border: 1px whitesmoke solid;
-    border-radius: 3px;
-    background: linear-gradient(2deg, ghostwhite 1%, whitesmoke 20%);
-  }
-  .icons, .el-icon-search, .el-icon-question, .el-icon-edit{
-    margin-top: 10px;
-    margin-right: 10px;
-    font-size: 40px;
-    align-self: center;
   }
   .content1, .content2, .content3{
     font-size: 20px;

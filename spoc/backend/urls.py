@@ -18,4 +18,7 @@ urlpatterns = [
     path('CancelCourse/', views.CancelCourse.as_view()),
     path('GetCourseInfo/', views.GetCourseInfo.as_view()),
     path('GetMaterialList/', views.GetMaterialList.as_view()),
+    path('BuildMaterial/', views.BuildMaterial.as_view()),
+    path('GetTeacherMaterialList/', views.GetTeacherMaterialList.as_view()),
+    path('DeleteMaterial/', views.DeleteMaterial.as_view()),
 ]

@@ -2,7 +2,7 @@
   <div class="background">
     <el-container class="header">
       <el-header>
-        <span>{{userName}} 教师首页</span>
+        <span>{{userNickName}} 教师首页</span>
       </el-header>
     </el-container>
 
@@ -11,7 +11,7 @@
         <TeacherNav></TeacherNav>
       </el-aside>
       <el-main>
-        欢迎来到SPOC教师界面，在这里你可以开设课程、查看已开设课程（小作业暂时就做这些）
+        欢迎来到SPOC教师界面，在这里你可以开设课程、查看已开设课程
       </el-main>
     </el-container>
   </div>
@@ -24,11 +24,17 @@ export default {
   components: {TeacherNav},
   data: function () {
     return {
+      userNickName: '',
       userName: ''
     }
   },
   mounted: function () {
     this.userName = this.cookie.getCookie('userName')
+    this.userNickName = this.cookie.getCookie('userNickName')
   }
 }
 </script>
+
+<style scoped>
+
+</style>
