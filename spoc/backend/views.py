@@ -3,6 +3,94 @@ from rest_framework.response import Response
 from .base_mysql import MySQL
 
 
+class buildPost(APIView):
+    def get(self, request):
+        postThemeId = str(request.GET.get("postThemeId", None))
+        userName = str(request.GET.get("userName", None))
+        userNickName = str(request.GET.get("userNickName", None))
+        content = str(request.GET.get("content", None))
+        time = str(request.GET.get("time", None))
+
+        sql = MySQL()
+        sql.buildPost(postThemeId, userName, content, time)
+        return Response(0)
+
+
+class GetPostList(APIView):
+    def get(self, request):
+        postThemeId = str(request.GET.get("postThemeId", None))
+        sql = MySQL()
+        result = sql.getPostList(postThemeId)
+        postList = []
+
+        for i in result:
+            postList.append({     "userName": i[0],
+                                  "userNickName": i[1],
+                                  "content": i[2],
+                                  "time": i[3]})
+        return Response(postList)
+
+class BuildPostTheme(APIView):
+    def get(self, request):
+        userName = str(request.GET.get("userName", None))
+        userNickName = str(request.GET.get("userNickName", None))
+        title = str(request.GET.get("title", None))
+        content = str(request.GET.get("content", None))
+        time = str(request.GET.get("time", None))
+
+        sql = MySQL()
+        sql.buildPostTheme(userName, title, content, time)
+
+        return Response(0)
+
+
+class GetPostThemeList(APIView):
+    def get(self, request):
+        sql = MySQL()
+        result = sql.getPostThemeList()
+        postThemeList = []
+
+        for i in result:
+            postThemeList.append({"id": i[5],
+                                  "userName": i[0],
+                                  "userNickName": i[1],
+                                  "title": i[2],
+                                  "content": i[3],
+                                  "time": i[4]})
+        return Response(postThemeList)
+
+
+class GetCommentList(APIView):
+    def get(self, request):
+        courseId = str(request.GET.get("courseId", None))
+        sql = MySQL()
+        result = sql.getCommentList(courseId)
+
+        commentList = []
+
+        for item in result:
+            commentList.append({"userName": item[0],
+                                "userNickName": item[1],
+                                "content": item[2],
+                                "time": item[3]})
+        return Response(commentList)
+
+
+class CommentCourse(APIView):
+    def get(self, request):
+        # String courseId, String userName, String userNickName, String content, String time
+        courseId = str(request.GET.get("courseId", None))
+        userName = str(request.GET.get("userName", None))
+        userNickName = str(request.GET.get("userNickName", None))
+        content = str(request.GET.get("content", None))
+        time = str(request.GET.get("time", None))
+
+        sql = MySQL()
+        sql.commentCourse(courseId, userName, content, time)
+
+        return Response(0)
+
+
 class StudentLogin(APIView):
     def get(self, request):
         # 默认userNickName为空
@@ -288,19 +376,23 @@ class GetTeacherCourseList(APIView):
         teacherCourseList = []  # 字典列表
         print(result)
         for item in result:
-            teacherCourseList.append({'id': item[0], 'name': item[1], 'materialIdString': item[2]})
+            teacherCourseList.append(
+                {'id': item[0], 'name': item[1], 'materialIdString': str(item[2]) if item[2] != None else None})
 
+        print(teacherCourseList)
         for item in teacherCourseList:
             if item['materialIdString'] != None:
                 material_id = item['materialIdString']
                 result = sql.getMaterialName(material_id)
-                item['materialIdString'] = result[0][0]
+                item['materialString'] = str(result[0][0])
 
         i = 1
         while i < len(teacherCourseList):
             if teacherCourseList[i - 1]['id'] == teacherCourseList[i]['id']:
                 teacherCourseList[i - 1]['materialIdString'] += ","
                 teacherCourseList[i - 1]['materialIdString'] += teacherCourseList[i]['materialIdString']
+                teacherCourseList[i - 1]['materialString'] += ","
+                teacherCourseList[i - 1]['materialString'] += teacherCourseList[i]['materialString']
                 teacherCourseList.pop(i)
                 i -= 1
             i += 1
@@ -323,7 +415,16 @@ class BuildCourse(APIView):
         # 从课程表里新建课程，这里只提供了课程名称，需要在数据库里分配一个对于该课程唯一的id
         print("BuildCourse得到的教师账号是 " + userName + "，课程名是:" + course['name'])
         print(course)
+        if course['name'] == "":
+            return Response(2)
+
         sql = MySQL()
+        for item in course['materialIdList']:
+            if item == '':
+                continue
+            if not sql.getMaterialName(item):
+                return Response(1)
+
         sql.buildCourse(userName, course['name'], course['materialIdList'])
         return Response(0)
 
@@ -336,8 +437,15 @@ class ChangeCourse(APIView):
         # 教师改课程名，只能改自己开的课程的名，成功返回0
         course = eval(course)
 
-        sql = MySQL()
+        if course['name'] == '':
+            return Response(2)
 
+        sql = MySQL()
+        for item in course['materialIdList']:
+            if item == '':
+                continue
+            if not sql.getMaterialName(item):
+                return Response(1)
         sql.changeCourse(teacher_id, course_id, course['name'], course['materialIdList'])
         return Response(0)
 

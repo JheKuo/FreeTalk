@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div class="background">
     <el-container class="header">
       <el-header>
         <span>{{userNickName}}  我的课程</span>
+        <el-button style="margin-top: 10px; float: right" v-on:click="goToHelloWorld">退出登录</el-button>
       </el-header>
     </el-container>
 
@@ -16,7 +17,7 @@
           <el-table-column label="课程名称" prop="name"></el-table-column>
           <el-table-column label="课程材料" prop="materialIdString"></el-table-column>
           <el-table-column label="退课"> <template slot-scope="scope">
-        <el-button v-on:click="dropCourse(scope.$index)" type="primary" plain="true">退课</el-button>
+        <el-button v-on:click="dropCourse(scope.$index)" type="danger">退课</el-button>
       </template></el-table-column>
         </el-table>
       </el-main>
@@ -79,6 +80,11 @@ export default {
       }).catch(function (error) {
         console.log(error)
       })
+    },
+    goToHelloWorld: function () {
+      this.cookie.clearCookie('userName')
+      this.cookie.clearCookie('userNickName')
+      this.$router.replace('/')
     }
   }
 }

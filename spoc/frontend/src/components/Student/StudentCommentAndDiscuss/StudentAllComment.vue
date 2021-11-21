@@ -2,21 +2,22 @@
   <div class="background">
     <el-container class="header">
       <el-header>
-        <span>{{userNickName}} 查看课程</span>
+        <span>课程评价</span>
         <el-button style="margin-top: 10px; float: right" v-on:click="goToHelloWorld">退出登录</el-button>
       </el-header>
     </el-container>
 
     <el-container class="main">
       <el-aside>
-        <TeacherNav></TeacherNav>
+        <StudentNav></StudentNav>
       </el-aside>
       <el-main>
         <el-table :data="courseList">
           <el-table-column label="课程ID" prop="id"></el-table-column>
           <el-table-column label="课程名称" prop="name"></el-table-column>
-          <el-table-column label="课程材料ID" prop="materialIdString"></el-table-column>
-          <el-table-column label="课程材料" prop="materialNameString"></el-table-column>
+          <el-table-column label="评价"> <template slot-scope="scope">
+        <el-button v-on:click="commentCourse(scope.$index)" type="primary">评价</el-button>
+      </template></el-table-column>
         </el-table>
       </el-main>
     </el-container>
@@ -24,43 +25,31 @@
 </template>
 
 <script>
-import TeacherNav from '../TeacherNav'
+import StudentNav from '../StudentNav'
+
 export default {
-  name: 'AllCourse',
-  components: {TeacherNav},
+  name: 'StudentAllComment',
+  components: {StudentNav},
   data: function () {
     return {
-      userNickName: '',
       userName: '',
+      userNickName: '',
       courseList: [{
         id: '1',
-        name: '前端测试课程',
-        materialIdString: [{
-          id: '1',
-          name: 'book1'
-        }],
+        name: '前端测试课程1',
+        materialIdString: '1,2',
         materialNameString: 'book1,book2'
       }, {
         id: '2',
-        name: '前端测试课程',
-        materialIdString: '12',
-        materialNameString: 'book1'
-      }, {
-        id: '3',
-        name: '前端测试课程',
-        materialIdString: '13',
-        materialNameString: 'book1'
-      }, {
-        id: '4',
-        name: '前端测试课程',
-        materialIdString: '14',
-        materialNameString: 'book1'
+        name: '前端测试课程2',
+        materialIdString: '1,2',
+        materialNameString: 'book1,book2'
       }]
     }
   },
   mounted: function () {
-    this.userNickName = this.cookie.getCookie('userNickName')
     this.userName = this.cookie.getCookie('userName')
+    this.userNickName = this.cookie.getCookie('userNickName')
     this.getCourseList()
   },
   methods: {
@@ -76,6 +65,16 @@ export default {
         console.log(error)
       })
     },
+    commentCourse: function (index) {
+      let that = this
+      this.$router.push({
+        path: '/StudentCommentAndDiscuss/StudentComment',
+        query: {
+          courseId: that.courseList[index].id,
+          courseName: that.courseList[index].name
+        }
+      })
+    },
     goToHelloWorld: function () {
       this.cookie.clearCookie('userName')
       this.cookie.clearCookie('userNickName')
@@ -84,3 +83,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+</style>

@@ -3,6 +3,7 @@
     <el-container class="header">
       <el-header>
         <span>{{userNickName}}  新建学习材料</span>
+        <el-button style="margin-top: 10px; float: right" v-on:click="goToHelloWorld">退出登录</el-button>
       </el-header>
     </el-container>
 
@@ -67,6 +68,11 @@ export default {
         console.log(error)
       })
       that.materialName = ''
+    },
+    goToHelloWorld: function () {
+      this.cookie.clearCookie('userName')
+      this.cookie.clearCookie('userNickName')
+      this.$router.replace('/')
     }
   }
 }
