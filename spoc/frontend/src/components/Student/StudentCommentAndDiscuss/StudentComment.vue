@@ -1,17 +1,21 @@
 <template>
   <div>
-   <el-container class="header">
-      <el-header>
-        <span>评价 {{courseName}}</span>
-        <el-button class="exit" v-on:click="goToHelloWorld">退出登录</el-button>
-      </el-header>
-    </el-container>
-
+<!--   <el-container class="header">-->
+<!--      <el-header>-->
+<!--        <span>评价 {{courseName}}</span>-->
+<!--        <el-button class="exit" v-on:click="goToHelloWorld">退出登录</el-button>-->
+<!--      </el-header>-->
+<!--    </el-container>-->
     <el-container class="main">
-      <el-aside>
+      <el-aside width="show?'64px':'400px'">
         <StudentNav></StudentNav>
       </el-aside>
-      <el-main>
+      <el-container>
+        <el-header>
+          <StudentHeading></StudentHeading>
+        </el-header>
+        <el-main>
+          <el-row>评价 {{courseName}}</el-row>
         <el-row class="buttons">
           <el-button v-on:click="commentCourse" type="primary" size="small" >发表评价</el-button>
           <el-button v-on:click="returnStudentAllComment" type="primary" size="small">返回</el-button>
@@ -23,7 +27,7 @@
           </el-col>
         </el-row>
         <el-divider></el-divider>
-        <p v-for="(comment) in commentList" v-bind:key="comment">
+        <div v-for="(comment) in commentList" v-bind:key="comment">
           <el-row class="time">
             {{comment.time}}
           </el-row>
@@ -31,14 +35,17 @@
             {{comment.userNickName}}({{comment.userName}}) :
           </el-row>
           <el-row class="content">
-            <el-col :span="1">
-              &nbsp;
-            </el-col>
             {{comment.content}}
           </el-row>
+          <el-row class="delete">
+            <div v-if="comment.userName === userName">
+              <el-link type="danger" v-on:click="deleteComment(comment.id)">删除</el-link>
+            </div>
+          </el-row>
           <el-divider></el-divider>
-        </p>
+        </div>
       </el-main>
+      </el-container>
     </el-container>
   </div>
 </template>
@@ -52,9 +59,11 @@
   }
   .time {
     font-size: small;
+    color: #e2e2e2;
   }
   .userName {
     font-size: medium;
+    color: #66b1ff;
   }
   .content {
     font-size: medium;
@@ -63,10 +72,10 @@
 
 <script>
 import StudentNav from '../StudentNav'
-
+import StudentHeading from '../StudentHeading'
 export default {
   name: 'StudentComment',
-  components: {StudentNav},
+  components: {StudentNav, StudentHeading},
   data: function () {
     return {
       userName: '前端测试用户名',
@@ -76,31 +85,37 @@ export default {
       contentInput: '',
       time: '',
       commentList: [{
+        id: 1,
         userName: '学号1',
         userNickName: '学生1',
         content: '课程评价内容1',
         time: '2021-11-19 11:11:11'
       }, {
-        userName: '学号2',
+        id: 2,
+        userName: 'admin',
         userNickName: '学生2',
         content: '课程评价内容2',
         time: '2021-11-19 11:11:11'
       }, {
+        id: 3,
         userName: '学号3',
         userNickName: '学生3',
         content: '课程评价内容3',
         time: '2021-11-19 11:11:11'
       }, {
+        id: 4,
         userName: '学号1',
         userNickName: '学生1',
         content: '课程评价内容1',
         time: '2021-11-19 11:11:11'
       }, {
+        id: 5,
         userName: '学号2',
         userNickName: '学生2',
         content: '课程评价内容2',
         time: '2021-11-19 11:11:11'
       }, {
+        id: 6,
         userName: '学号3',
         userNickName: '学生3',
         content: '课程评价内容3',
@@ -117,6 +132,16 @@ export default {
     this.getCommentList()
   },
   methods: {
+    getTime: function () {
+      let dt = new Date()
+      let yyyy = dt.getFullYear()
+      let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
+      let dd = dt.getDate().toString().padStart(2, '0')
+      let h = dt.getHours().toString().padStart(2, '0')
+      let m = dt.getMinutes().toString().padStart(2, '0')
+      let s = dt.getSeconds().toString().padStart(2, '0')
+      this.time = yyyy + '-' + MM + '-' + dd + ' ' + h + ':' + m + ':' + s
+    },
     getCommentList: function () {
       let that = this
       this.$http.request({
@@ -131,16 +156,6 @@ export default {
       }).catch(function (error) {
         console.log(error)
       })
-    },
-    getTime: function () {
-      let dt = new Date()
-      let yyyy = dt.getFullYear()
-      let MM = (dt.getMonth() + 1).toString().padStart(2, '0')
-      let dd = dt.getDate().toString().padStart(2, '0')
-      let h = dt.getHours().toString().padStart(2, '0')
-      let m = dt.getMinutes().toString().padStart(2, '0')
-      let s = dt.getSeconds().toString().padStart(2, '0')
-      this.time = yyyy + '-' + MM + '-' + dd + ' ' + h + ':' + m + ':' + s
     },
     commentCourse: function () {
       let that = this
@@ -168,6 +183,27 @@ export default {
         console.log(error)
       })
     },
+    deleteComment: function (commentId) {
+      let that = this
+      that.getTime()
+      this.$http.request({
+        url: that.$url + 'DeleteComment/',
+        method: 'get',
+        params: {
+          commentId: commentId
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        if (response.data === 0) {
+          that.$message.success('删除成功')
+          that.getCommentList()
+        } else {
+          that.$message.error('未知错误')
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     returnStudentAllComment: function () {
       let that = this
       that.$router.push({
@@ -182,3 +218,8 @@ export default {
   }
 }
 </script>
+
+<style scope>
+  @import "../../../assets/css/head.css";
+  @import "../../../assets/css/Nav.css";
+</style>
