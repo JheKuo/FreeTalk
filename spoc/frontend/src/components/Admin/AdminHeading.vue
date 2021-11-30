@@ -19,20 +19,16 @@
 
 <script>
 import Utils from '../../assets/js/util.js'
-import TeacherNav from './TeacherNav'
+import AdminNav from './AdminNav'
 export default {
-  name: 'TeacherHeading',
-  components: {TeacherNav},
+  name: 'AdminHeading',
+  components: {AdminNav},
   data: function () {
     return {
-      userName: '',
-      userNickName: '',
+      userName: 'Admin',
+      userNickName: 'Admin',
       show: false
     }
-  },
-  mounted: function () {
-    this.userName = this.cookie.getCookie('userName')
-    this.userNickName = this.cookie.getCookie('userNickName')
   },
   methods: {
     goToHelloWorld: function () {
@@ -42,13 +38,14 @@ export default {
     },
     toggleCollapse: function () {
       this.show = !this.show
-      Utils.$emit('toggleCollapseTeacher', 'call function toggleCollapse in StudentNav')
+      Utils.$emit('toggleCollapseAdmin', 'call function toggleCollapse in Admin')
     },
     handleCommand (command) {
       this.goToHelloWorld()
     }
   }
 }
+
 </script>
 
 <style scoped>

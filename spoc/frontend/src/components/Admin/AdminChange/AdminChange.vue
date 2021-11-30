@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-container class="background">
-      <el-aside class="aside" width="show?'64px':'300px'">
+    <el-container class='background'>
+      <el-aside class='aside' width="show?'64px':'300px'">
         <AdminNav></AdminNav>
       </el-aside>
-      <el-container class="main">
+      <el-container class='main'>
         <el-header>
           <AdminHeading></AdminHeading>
         </el-header>
@@ -20,8 +20,8 @@
 import AdminNav from '../AdminNav'
 import AdminHeading from '../AdminHeading'
 export default {
-  name: 'CommentTable',
-  components: {AdminHeading, AdminNav}
+  name: 'AdminChange',
+  components: {AdminNav, AdminHeading}
 }
 </script>
 

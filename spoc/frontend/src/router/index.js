@@ -26,6 +26,14 @@ import StudentAllComment from '../components/Student/StudentCommentAndDiscuss/St
 import StudentComment from '../components/Student/StudentCommentAndDiscuss/StudentComment'
 import StudentAllDiscuss from '../components/Student/StudentCommentAndDiscuss/StudentAllDiscuss'
 import StudentDiscuss from '../components/Student/StudentCommentAndDiscuss/StudentDiscuss'
+import AdminLogin from '../components/Admin/AdminLogin'
+import AdminHead from '../components/Admin/AdminHead'
+import AdminChange from '../components/Admin/AdminChange/AdminChange'
+import StudentTable from '../components/Admin/StudentTable/StudentTable'
+import CommentTable from '../components/Admin/CommentTable/CommentTable'
+import CourseTable from '../components/Admin/CourseTable/CourseTable'
+import MaterialTable from '../components/Admin/MaterialTable/MaterialTable'
+import TeacherTable from '../components/Admin/TeacherTable/TeacherTable'
 
 Vue.use(Router)
 
@@ -178,6 +186,88 @@ export default new Router({
           path: 'StudentDiscuss',
           name: 'StudentDiscuss',
           component: StudentDiscuss
+        }
+      ]
+    },
+    {
+      path: '/AdminLogin',
+      name: 'AdminLogin',
+      component: AdminLogin
+    },
+    {
+      path: '/AdminHead',
+      name: 'AdminHead',
+      component: AdminHead
+    },
+    {
+      path: '/AdminChange',
+      name: 'AdminChange',
+      component: AdminChange,
+      children: [
+        {
+          path: 'AdminChange',
+          name: 'AdminChange',
+          component: AdminChange
+        }
+      ]
+    },
+    {
+      path: '/StudentTable',
+      name: 'StudentTable',
+      component: StudentTable,
+      children: [
+        {
+          path: 'StudentTable',
+          name: 'StudentTable',
+          component: StudentChange
+        }
+      ]
+    },
+    {
+      path: '/CommentTable',
+      name: 'CommentTable',
+      component: CommentTable,
+      children: [
+        {
+          path: 'CommentTable',
+          name: 'CommentTable',
+          component: CommentTable
+        }
+      ]
+    },
+    {
+      path: '/CourseTable',
+      name: 'CourseTable',
+      component: CourseTable,
+      children: [
+        {
+          path: 'CourseTable',
+          name: 'CourseTable',
+          component: CourseTable
+        }
+      ]
+    },
+    {
+      path: '/MaterialTable',
+      name: 'MaterialTable',
+      component: MaterialTable,
+      children: [
+        {
+          path: 'MaterialTable',
+          name: 'MaterialTable',
+          component: MaterialTable
+        }
+      ]
+    },
+    {
+      path: '/TeacherTable',
+      name: 'TeacherTable',
+      component: TeacherTable,
+      children: [
+        {
+          path: 'TeacherTable',
+          name: 'TeacherTable',
+          component: TeacherTable
         }
       ]
     }

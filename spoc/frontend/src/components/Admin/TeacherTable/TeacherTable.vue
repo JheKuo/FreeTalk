@@ -9,9 +9,9 @@
           <AdminHeading></AdminHeading>
         </el-header>
         <el-main>
-          <el-table :data="studentList">
-            <el-table-column label="学号" prop="id"></el-table-column>
-            <el-table-column label="姓名" prop="name"></el-table-column>
+          <el-table :data="teacherList">
+            <el-table-column label="教师工号" prop="id"></el-table-column>
+            <el-table-column label="教师名称" prop="name"></el-table-column>
           </el-table>
         </el-main>
       </el-container>
@@ -23,25 +23,25 @@
 import AdminNav from '../AdminNav'
 import AdminHeading from '../AdminHeading'
 export default {
-  name: 'AdminTable',
+  name: 'TeacherTable',
   components: {AdminHeading, AdminNav},
   data: function () {
     return {
-      studentList: [
+      teacherList: [
         {
-          id: 19373686,
-          name: '欧阳奎'
+          id: 't19373686',
+          name: '欧阳老师'
         },
         {
-          id: 19373135,
-          name: '田旗舰'
+          id: 't19373135',
+          name: '田老师'
         },
         {
-          id: 19373136,
-          name: '郭明明'
+          id: 't19373136',
+          name: '郭老师'
         },
         {
-          id: 19373000,
+          id: 't19373000',
           name: null
         },
         {

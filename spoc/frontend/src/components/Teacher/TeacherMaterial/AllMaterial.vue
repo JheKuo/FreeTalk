@@ -1,22 +1,18 @@
 <template>
-  <div class="background">
-<!--    <el-container class="header">-->
-<!--      <el-header>-->
-<!--        <span>{{userNickName}} 查看学习材料</span>-->
-<!--        <el-button style="margin-top: 10px; float: right" v-on:click="goToHelloWorld">退出登录</el-button>-->
-<!--      </el-header>-->
-<!--    </el-container>-->
-    <el-container class="main">
-      <el-aside width="show?'64px':'250px'">
+  <div>
+    <el-container class="background">
+      <el-aside class="aside" width="show?'64px':'250px'">
         <TeacherNav></TeacherNav>
       </el-aside>
-      <el-container>
-        <el-header><TeacherHeading></TeacherHeading></el-header>
+      <el-container class="main">
+        <el-header>
+          <TeacherHeading></TeacherHeading>
+        </el-header>
         <el-main>
-        <el-table :data="materialList">
-          <el-table-column label="学习材料ID" prop="id"></el-table-column>
-          <el-table-column label="学习材料名称" prop="name"></el-table-column>
-        </el-table>
+          <el-table :data="materialList" v-loading="loading">
+            <el-table-column label="学习材料ID" prop="id"></el-table-column>
+            <el-table-column label="学习材料名称" prop="name"></el-table-column>
+          </el-table>
       </el-main>
       </el-container>
     </el-container>
@@ -31,6 +27,7 @@ export default {
   components: {TeacherNav, TeacherHeading},
   data: function () {
     return {
+      loading: true,
       userNickName: '',
       userName: '',
       materialList: [{
@@ -41,45 +38,6 @@ export default {
         name: '前端测试课程材料'
       }, {
         id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '1',
-        name: '前端测试课程材料'
-      }, {
-        id: '2',
-        name: '前端测试课程材料'
-      }, {
-        id: '2',
-        name: '前端测试课程材料'
-      }, {
-        id: '2',
-        name: '前端测试课程材料'
-      }, {
-        id: '2',
-        name: '前端测试课程材料'
-      }, {
-        id: '2',
         name: '前端测试课程材料'
       }]
     }
@@ -92,13 +50,16 @@ export default {
   methods: {
     getMaterialList: function () {
       let that = this
+      that.loading = true
       this.$http.request({
         url: that.$url + 'GetMaterialList/',
         method: 'get'
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         that.materialList = response.data
       }).catch(function (error) {
+        that.loading = false
         console.log(error)
       })
     },
@@ -112,6 +73,6 @@ export default {
 </script>
 
 <style scoped>
- @import "../../../assets/css/Nav.css";
- @import "../../../assets/css/head.css";
+ @import "../../../assets/css/nav.css";
+ @import "../../../assets/css/back.css";
 </style>

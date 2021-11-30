@@ -1,5 +1,6 @@
 <template>
-  <div class="background">
+  <transition name="head-login-register">
+    <div class="background">
     <br>
     <div class="register_block">
       <div class="register_head">
@@ -27,11 +28,12 @@
             </el-button>
         </div>
         <div class="return-text">
-           <el-link href="#/">返回</el-link>
+           <el-link href="#/" style="font-size: 8px; color: white">返回</el-link>
         </div>
       </el-form>
     </div>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -46,6 +48,9 @@ export default {
       status: -1
     }
   },
+  mounted() {
+    window.addEventListener('keydown', this.keydown)
+  },
   methods: {
     goToStudentHead: function () {
       let that = this
@@ -57,9 +62,8 @@ export default {
           that.$router.push({
             name: 'StudentHead',
           })
-          console.log('from:' + that.userName)
         } else {
-          that.$message.error('!')
+          that.$message.error('!!!')
         }
       } else {
         this.$http.request({
@@ -95,11 +99,20 @@ export default {
       this.$router.push({
         name: 'StudentRegister'
       })
+    },
+    keydown(e) {
+      if (e.keyCode === 13) {
+        this.goToStudentHead()
+      }
     }
+  },
+  destroyed() {
+    window.removeEventListener('keydown', this.keydown, false)
   }
 }
 </script>
 
 <style scoped>
   @import "../../assets/css/login.css";
+  @import "../../assets/css/Transition/head-login-register.css";
 </style>

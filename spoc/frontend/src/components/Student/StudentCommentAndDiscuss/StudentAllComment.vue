@@ -1,19 +1,19 @@
 <template>
-  <div class="background">
-    <el-container class="main">
-      <el-aside width="show?'64px':'400px'">
+  <div>
+    <el-container class="background">
+      <el-aside class="aside" width="show?'64px':'400px'">
         <StudentNav></StudentNav>
       </el-aside>
-      <el-container>
+      <el-container class="main">
         <el-header>
           <StudentHeading></StudentHeading>
         </el-header>
         <el-main>
-          <el-table :data="courseList">
+          <el-table :data="courseList"  v-loading="loading">
             <el-table-column label="课程ID" prop="id"></el-table-column>
             <el-table-column label="课程名称" prop="name"></el-table-column>
             <el-table-column label="评价"> <template slot-scope="scope">
-          <el-button v-on:click="commentCourse(scope.$index)" type="primary">评价</el-button>
+          <el-button v-on:click="commentCourse(scope.$index)" type="primary" size="small">评价</el-button>
         </template></el-table-column>
           </el-table>
         </el-main>
@@ -30,6 +30,7 @@ export default {
   components: {StudentNav, StudentHeading},
   data: function () {
     return {
+      loading: true,
       userName: '',
       userNickName: '',
       courseList: [{
@@ -53,14 +54,17 @@ export default {
   methods: {
     getCourseList: function () {
       let that = this
+      that.loading = true
       this.$http.request({
         url: that.$url + 'GetCourseList/',
         method: 'get'
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         that.courseList = response.data
       }).catch(function (error) {
         console.log(error)
+        that.loading = false
       })
     },
     commentCourse: function (index) {
@@ -83,5 +87,5 @@ export default {
 </script>
 
 <style scoped>
-
+  @import "../../../assets/css/back.css";
 </style>

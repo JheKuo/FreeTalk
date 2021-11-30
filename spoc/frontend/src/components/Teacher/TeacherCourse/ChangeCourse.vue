@@ -1,22 +1,15 @@
 <template>
-<div class="background">
-<!--    <el-container class="header">-->
-<!--      <el-header>-->
-<!--        <span>{{userNickName}} 修改 {{name}}</span>-->
-<!--        <el-button style="margin-top: 10px; float: right" v-on:click="goToHelloWorld">退出登录</el-button>-->
-<!--      </el-header>-->
-<!--    </el-container>-->
-
-    <el-container class="main">
-      <el-aside width="show?'64px':'250px'">
+  <div>
+    <el-container class="background">
+      <el-aside class="aside" width="show?'64px':'250px'">
         <TeacherNav></TeacherNav>
       </el-aside>
-      <el-container>
+      <el-container class="main">
         <el-header>
           <TeacherHeading></TeacherHeading>
         </el-header>
         <el-main>
-        <el-form label-position="top">
+        <el-form label-position="top" v-loading="loading">
           <el-form-item label="课程名称">
             <el-col :span="6">
               <el-input v-model="course.name"></el-input>
@@ -48,6 +41,7 @@ export default {
   components: {TeacherNav, TeacherHeading},
   data: function () {
     return {
+      loading: true,
       userName: '',
       userNickName: '',
       id: '',
@@ -76,7 +70,10 @@ export default {
     },
     changeCourse: function () {
       let that = this
-      that.course.materialIdList = that.materialIdString.split(',')
+      that.loading = true
+      if (that.course.materialIdString !== '') {
+        that.course.materialIdList = that.materialIdString.split(',')
+      }
       this.$http.request({
         url: that.$url + 'ChangeCourse/',
         method: 'get',
@@ -87,18 +84,20 @@ export default {
         }
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         if (response.data === 0) {
           that.$message.success('修改成功')
           that.$router.push({
             name: 'ManageCourse'
           })
         } else if (response.data === 1) {
-          that.$message.error('学习材料编号错误')
+          that.$message.error('学习材料编号不存在')
         } else if (response.data === 2) {
           that.$message.error('课程名称不能为空')
         }
       }).catch(function (error) {
         console.log(error)
+        that.loading = false
       })
     },
     goToHelloWorld: function () {
@@ -111,6 +110,6 @@ export default {
 </script>
 
 <style scoped>
- @import "../../../assets/css/Nav.css";
- @import "../../../assets/css/head.css";
+ @import "../../../assets/css/nav.css";
+ @import "../../../assets/css/back.css";
 </style>

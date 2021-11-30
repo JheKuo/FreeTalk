@@ -1,22 +1,14 @@
 <template>
-  <div class="background">
-<!--    <el-container class="header">-->
-<!--      <el-header>-->
-<!--        <span>{{userNickName}}  新建学习材料</span>-->
-<!--        <el-button style="margin-top: 10px; float: right" v-on:click="goToHelloWorld">退出登录</el-button>-->
-<!--      </el-header>-->
-<!--    </el-container>-->
-
-    <el-container class="main">
-      <el-aside width="show?'64px':'250px'">
+    <el-container class="background">
+      <el-aside class="aside" width="show?'64px':'250px'">
         <TeacherNav></TeacherNav>
       </el-aside>
-      <el-container>
+      <el-container class="main">
         <el-header>
           <TeacherHeading></TeacherHeading>
         </el-header>
         <el-main>
-        <el-form label-position="top">
+        <el-form label-position="top" v-loading="loading">
           <el-form-item label="学习材料名称">
             <el-col :span="6">
               <el-input placeholder="请输入学习材料名称" v-model="materialName"></el-input>
@@ -31,7 +23,6 @@
       </el-main>
       </el-container>
     </el-container>
-  </div>
 </template>
 
 <script>
@@ -42,6 +33,7 @@ export default {
   components: {TeacherNav, TeacherHeading},
   data: function () {
     return {
+      loading: true,
       userNickName: '',
       userName: '',
       materialName: ''
@@ -54,6 +46,7 @@ export default {
   methods: {
     buildMaterial: function () {
       let that = this
+      that.loading = true
       this.$http.request({
         url: that.$url + 'BuildMaterial/',
         method: 'get',
@@ -63,14 +56,16 @@ export default {
         }
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         that.status = response.data
         if (that.status === 0) {
           that.$message.success('创建成功')
         } else {
-          that.$message.error('!')
+          that.$message.error('未知错误')
         }
       }).catch(function (error) {
         console.log(error)
+        that.loading = false
       })
       that.materialName = ''
     },
@@ -84,6 +79,6 @@ export default {
 </script>
 
 <style scoped>
- @import "../../../assets/css/Nav.css";
- @import "../../../assets/css/head.css";
+ @import "../../../assets/css/nav.css";
+ @import "../../../assets/css/back.css";
 </style>

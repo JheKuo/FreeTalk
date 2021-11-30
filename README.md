@@ -1,10 +1,10 @@
 #  BUAA DB
 
-2021年北航数据库大作业
+2021年秋北航数据库大作业
 
 
 ## Description 
- [![](https://img.shields.io/badge/frontend-Vue.js-9cf)](https://vuejs.org/)   [![](https://img.shields.io/badge/backend-Django-9cf)](https://www.djangoproject.com/) 
+ [![](https://img.shields.io/badge/frontend-Vue.js-9cf)](https://vuejs.org/)   [![](https://img.shields.io/badge/backend-Django-96d6d1)](https://www.djangoproject.com/)  [![](https://img.shields.io/badge/UI%20Toolkit-Element-3F93B3)](https://element.eleme.io/)
 
 ### build and run：
 
@@ -107,7 +107,7 @@ grade() //打分
 
 ## License
 
-
+[MIT](./LICENSE)
 
 
 [tqj]: https://github.com/fangzhou0216

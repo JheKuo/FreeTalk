@@ -1,10 +1,10 @@
 <template>
-  <div class="background">
-    <el-container class="main">
-      <el-aside width="show?'64px':'400px'">
+  <div>
+    <el-container class="background">
+      <el-aside class="aside" width="show?'64px':'400px'">
         <StudentNav></StudentNav>
       </el-aside>
-      <el-container>
+      <el-container class="main">
         <el-header>
           <StudentHeading></StudentHeading>
         </el-header>
@@ -26,11 +26,11 @@
               <el-button type="primary" @click="buildPostTheme">确定</el-button>
             </div>
           </el-dialog>
-          <el-table :data="postThemeList">
+          <el-table :data="postThemeList" v-loading="loading">
             <el-table-column label="主题贴ID" prop="id"></el-table-column>
             <el-table-column label="主题贴标题" prop="title"></el-table-column>
             <el-table-column label="进入贴子"> <template slot-scope="scope">
-          <el-button v-on:click="enterPostTheme(scope.$index)" type="primary">进入</el-button>
+          <el-button v-on:click="enterPostTheme(scope.$index)" type="primary" size="small">进入</el-button>
         </template></el-table-column>
           </el-table>
         </el-main>
@@ -47,6 +47,7 @@ export default {
   components: {StudentNav, StudentHeading},
   data: function () {
     return {
+      loading: true,
       userName: '',
       userNickName: '',
       input: {
@@ -80,14 +81,17 @@ export default {
   methods: {
     getPostThemeList: function () {
       let that = this
+      that.loading = true
       this.$http.request({
         url: that.$url + 'GetPostThemeList/',
         method: 'get'
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         that.postThemeList = response.data
       }).catch(function (error) {
         console.log(error)
+        that.loading = false
       })
     },
     getTime: function () {
@@ -156,5 +160,5 @@ export default {
 </script>
 
 <style scoped>
-  @import "../../../assets/css/head.css";
+  @import "../../../assets/css/back.css";
 </style>

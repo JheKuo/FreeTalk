@@ -1,5 +1,6 @@
 <template>
-  <div class="background">
+  <transition name="head-login-register">
+    <div class="background">
     <br>
     <div class="register_block">
       <div class="register_head">
@@ -27,11 +28,12 @@
             </el-button>
         </div>
         <div class="return-text">
-           <el-link href="#/">返回</el-link>
+           <el-link href="#/" style="font-size: 8px; color: white">返回</el-link>
         </div>
       </el-form>
     </div>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -46,22 +48,22 @@ export default {
       status: -1
     }
   },
+  mounted () {
+    window.addEventListener('keydown', this.keydown)
+  },
   methods: {
     goToTeacherHead: function () {
       let that = this
       let debug = true
       if (debug) {
         if (that.userName === 'admin' && that.userPassWord === '123456') {
+          let loginInfo = {userName: 'admin', userNickName: '前端测试教师'}
+          that.cookie.setCookie(loginInfo)
           that.$router.push({
             name: 'TeacherHead',
-            params: {
-              userNickName: that.userNickName,
-              userName: that.userName
-            }
           })
-          console.log('from:' + that.userName)
         } else {
-          that.$message.error('!')
+          that.$message.error('!!!')
         }
       } else {
         this.$http.request({
@@ -95,11 +97,20 @@ export default {
       this.$router.push({
         name: 'TeacherRegister'
       })
+    },
+    keydown (e) {
+      if (e.keyCode === 13) {
+        this.goToTeacherHead()
+      }
     }
+  },
+  destroyed () {
+    window.removeEventListener('keydown', this.keydown, false)
   }
 }
 </script>
 
 <style scoped>
   @import "../../assets/css/login.css";
+  @import "../../assets/css/Transition/head-login-register.css";
 </style>

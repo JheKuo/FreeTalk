@@ -1,5 +1,6 @@
 <template>
-  <div class="background">
+  <transition name="head-login-register">
+    <div class="background">
     <br>
     <div class="register_block">
       <div class="register_head">
@@ -39,6 +40,7 @@
       </el-form>
     </div>
   </div>
+  </transition>
 </template>
 
 <script>
@@ -52,6 +54,9 @@ export default {
       userPassWord: '',
       userPassWord2: ''
     }
+  },
+  mounted () {
+    window.addEventListener('keydown', this.keydown)
   },
   methods: {
     goToStudentLogin: function () {
@@ -96,11 +101,20 @@ export default {
           console.log(error)
         })
       }
+    },
+    keydown (e) {
+      if (e.keyCode === 13) {
+        this.Register()
+      }
     }
+  },
+  destroyed () {
+    window.removeEventListener('keydown', this.keydown, false)
   }
 }
 </script>
 
 <style scoped>
   @import "../../assets/css/register.css";
+  @import "../../assets/css/Transition/head-login-register.css";
 </style>

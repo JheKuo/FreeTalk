@@ -1,20 +1,20 @@
 <template>
-  <div class="background">
-    <el-container class="main">
-      <el-aside width="show?'64px':'400px'">
+  <div>
+    <el-container class="background">
+      <el-aside class="aside" width="show?'64px':'400px'">
         <StudentNav></StudentNav>
       </el-aside>
-      <el-container>
+      <el-container class="main">
         <el-header>
           <StudentHeading></StudentHeading>
         </el-header>
         <el-main>
-          <el-table :data="myCourseList">
+          <el-table :data="myCourseList" v-loading="loading" >
             <el-table-column label="课程ID" prop="id"></el-table-column>
             <el-table-column label="课程名称" prop="name"></el-table-column>
             <el-table-column label="课程材料" prop="materialIdString"></el-table-column>
             <el-table-column label="退课"> <template slot-scope="scope">
-          <el-button v-on:click="dropCourse(scope.$index)" type="danger">退课</el-button>
+          <el-button v-on:click="dropCourse(scope.$index)" type="danger" size="small">退课</el-button>
         </template></el-table-column>
           </el-table>
         </el-main>
@@ -31,6 +31,7 @@ export default {
   components: {StudentNav, StudentHeading},
   data: function () {
     return {
+      loading: true,
       userName: '',
       userNickName: '',
       myCourseList: [{
@@ -48,6 +49,7 @@ export default {
   methods: {
     getStudentCourseList: function () {
       let that = this
+      that.loading = true
       this.$http.request({
         url: that.$url + 'GetStudentCourseList/',
         method: 'get',
@@ -56,28 +58,39 @@ export default {
         }
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         that.myCourseList = response.data
       }).catch(function (error) {
         console.log(error)
+        that.loading = false
       })
     },
     dropCourse: function (index) {
-      console.log(index)
-      let that = this
-      this.$http.request({
-        url: that.$url + 'DropCourse/',
-        method: 'get',
-        params: {
-          userName: that.userName,
-          id: that.myCourseList[index].id
-        }
-      }).then(function (response) {
-        console.log(response.data)
-        // that.myCourseList = response.data
-        that.getStudentCourseList()
-        that.$message.success('退课成功')
-      }).catch(function (error) {
-        console.log(error)
+      this.$confirm('此操作将退选该课程，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(index)
+        let that = this
+        this.$http.request({
+          url: that.$url + 'DropCourse/',
+          method: 'get',
+          params: {
+            userName: that.userName,
+            id: that.myCourseList[index].id
+          }
+        }).then(function (response) {
+          console.log(response.data)
+          if (response.data === 0) {
+            that.$message.success('退课成功')
+          } else {
+            that.$message.error('未知错误')
+          }
+          that.getStudentCourseList()
+        }).catch(function (error) {
+          console.log(error)
+        })
       })
     },
     goToHelloWorld: function () {
@@ -90,5 +103,5 @@ export default {
 </script>
 
 <style scoped>
-  @import "../../../assets/css/head.css";
+  @import "../../../assets/css/back.css";
 </style>

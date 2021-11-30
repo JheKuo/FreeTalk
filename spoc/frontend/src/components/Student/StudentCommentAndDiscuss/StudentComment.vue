@@ -1,49 +1,43 @@
 <template>
   <div>
-<!--   <el-container class="header">-->
-<!--      <el-header>-->
-<!--        <span>评价 {{courseName}}</span>-->
-<!--        <el-button class="exit" v-on:click="goToHelloWorld">退出登录</el-button>-->
-<!--      </el-header>-->
-<!--    </el-container>-->
-    <el-container class="main">
-      <el-aside width="show?'64px':'400px'">
+    <el-container class="background">
+      <el-aside class="aside" width="show?'64px':'400px'">
         <StudentNav></StudentNav>
       </el-aside>
-      <el-container>
+      <el-container class="main">
         <el-header>
           <StudentHeading></StudentHeading>
         </el-header>
         <el-main>
-          <el-row>评价 {{courseName}}</el-row>
-        <el-row class="buttons">
-          <el-button v-on:click="commentCourse" type="primary" size="small" >发表评价</el-button>
-          <el-button v-on:click="returnStudentAllComment" type="primary" size="small">返回</el-button>
-        </el-row>
-        <el-row class="buttons">
-          <el-col :span="20">
-            <el-input class="input" v-model="contentInput" type="textarea" :rows="2" placeholder="对于课程内容、讲课质量、考核方式等的评价">
-            </el-input>
-          </el-col>
-        </el-row>
-        <el-divider></el-divider>
-        <div v-for="(comment) in commentList" v-bind:key="comment">
-          <el-row class="time">
-            {{comment.time}}
+          <el-row class="buttons">评价 {{courseName}}</el-row>
+          <el-row class="buttons">
+            <el-button v-on:click="commentCourse" type="primary" size="small" >发表评价</el-button>
+            <el-button v-on:click="returnStudentAllComment" type="primary" size="small">返回</el-button>
           </el-row>
-          <el-row class="userName">
-            {{comment.userNickName}}({{comment.userName}}) :
-          </el-row>
-          <el-row class="content">
-            {{comment.content}}
-          </el-row>
-          <el-row class="delete">
-            <div v-if="comment.userName === userName">
-              <el-link type="danger" v-on:click="deleteComment(comment.id)">删除</el-link>
-            </div>
+          <el-row class="buttons">
+            <el-col :span="20">
+              <el-input class="input" v-model="contentInput" type="textarea" :rows="2" placeholder="对于课程内容、讲课质量、考核方式等的评价">
+              </el-input>
+            </el-col>
           </el-row>
           <el-divider></el-divider>
-        </div>
+          <div v-for="(comment) in commentList" v-bind:key="comment">
+            <el-row class="time">
+              {{comment.time}}
+            </el-row>
+            <el-row class="userName">
+              {{comment.userNickName}}({{comment.userName}}) :
+            </el-row>
+            <el-row class="content">
+              {{comment.content}}
+            </el-row>
+            <el-row class="delete">
+              <div v-if="comment.userName === userName">
+                <el-link type="danger" v-on:click="deleteComment(comment.id)">删除</el-link>
+              </div>
+            </el-row>
+            <el-divider></el-divider>
+          </div>
       </el-main>
       </el-container>
     </el-container>
@@ -67,6 +61,7 @@
   }
   .content {
     font-size: medium;
+    word-break: break-all;
   }
 </style>
 
@@ -89,36 +84,6 @@ export default {
         userName: '学号1',
         userNickName: '学生1',
         content: '课程评价内容1',
-        time: '2021-11-19 11:11:11'
-      }, {
-        id: 2,
-        userName: 'admin',
-        userNickName: '学生2',
-        content: '课程评价内容2',
-        time: '2021-11-19 11:11:11'
-      }, {
-        id: 3,
-        userName: '学号3',
-        userNickName: '学生3',
-        content: '课程评价内容3',
-        time: '2021-11-19 11:11:11'
-      }, {
-        id: 4,
-        userName: '学号1',
-        userNickName: '学生1',
-        content: '课程评价内容1',
-        time: '2021-11-19 11:11:11'
-      }, {
-        id: 5,
-        userName: '学号2',
-        userNickName: '学生2',
-        content: '课程评价内容2',
-        time: '2021-11-19 11:11:11'
-      }, {
-        id: 6,
-        userName: '学号3',
-        userNickName: '学生3',
-        content: '课程评价内容3',
         time: '2021-11-19 11:11:11'
       }
       ]
@@ -184,24 +149,29 @@ export default {
       })
     },
     deleteComment: function (commentId) {
-      let that = this
-      that.getTime()
-      this.$http.request({
-        url: that.$url + 'DeleteComment/',
-        method: 'get',
-        params: {
-          commentId: commentId
-        }
-      }).then(function (response) {
-        console.log(response.data)
-        if (response.data === 0) {
-          that.$message.success('删除成功')
-          that.getCommentList()
-        } else {
-          that.$message.error('未知错误')
-        }
-      }).catch(function (error) {
-        console.log(error)
+      this.$confirm('此操作将永久删除该评价，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(() => {
+        let that = this
+        that.getTime()
+        this.$http.request({
+          url: that.$url + 'DeleteComment/',
+          method: 'get',
+          params: {
+            commentId: commentId
+          }
+        }).then(function (response) {
+          console.log(response.data)
+          if (response.data === 0) {
+            that.$message.success('删除成功')
+            that.getCommentList()
+          } else {
+            that.$message.error('未知错误')
+          }
+        }).catch(function (error) {
+          console.log(error)
+        })
       })
     },
     returnStudentAllComment: function () {
@@ -220,6 +190,5 @@ export default {
 </script>
 
 <style scope>
-  @import "../../../assets/css/head.css";
-  @import "../../../assets/css/Nav.css";
+  @import "../../../assets/css/back.css";
 </style>
