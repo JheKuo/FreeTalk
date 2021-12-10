@@ -8,13 +8,14 @@
         <el-header>
           <StudentHeading></StudentHeading>
         </el-header>
-        <el-main>
+        <el-main style="padding-left: 10%; padding-right: 10%">
+          <el-page-header @back="returnStudentAllDiscuss" :content="courseName" style="margin-bottom: 2%"></el-page-header>
           <el-row class="buttons">
             {{postTheme.title}}
           </el-row>
           <el-row class="buttons">
             <el-button v-on:click="buildPost" type="primary" size="small" >跟贴</el-button>
-            <el-button v-on:click="returnStudentAllDiscuss" type="primary" size="small">返回</el-button>
+<!--            <el-button v-on:click="returnStudentAllDiscuss" size="small">返回</el-button>-->
           </el-row>
           <el-row class="buttons">
             <el-col :span="20">
@@ -23,27 +24,76 @@
             </el-col>
           </el-row>
           <el-divider>楼主</el-divider>
-            <el-row class="time">
-              {{postTheme.time}}
+          <el-card shadow="hover" style="margin-bottom: 2%">
+            <el-row>
+              <el-col :offset="2" :span="2">
+<!--                <el-row>-->
+<!--                  <el-empty :image-size="80" style="margin: 0 !important; padding: 0 !important;"></el-empty>-->
+<!--                </el-row>-->
+                <el-row class="time">
+                  {{postTheme.time}}
+                </el-row>
+                <el-row class="userName">
+                  <el-col v-if="postTheme.isTeacher === 1">
+                    {{postTheme.userNickName}}({{postTheme.userName}}) (教师)
+                  </el-col>
+                  <el-col v-else-if="postTheme.isTeacher === 2">
+                    {{postTheme.userNickName}}({{postTheme.userName}}) (管理员)
+                  </el-col>
+                  <el-col v-else>
+                    {{postTheme.userNickName}}({{postTheme.userName}})
+                  </el-col>
+                </el-row>
+              </el-col>
+              <el-col :offset="2" :span="18">
+                <el-row class="content">
+                    {{postTheme.content}}
+                </el-row>
+                <el-row class="delete">
+                  <div v-if="postTheme.userName === userName">
+                    <el-link type="danger" v-on:click="deletePostTheme">删除</el-link>
+                  </div>
+                </el-row>
+              </el-col>
             </el-row>
-            <el-row class="userName">
-              {{postTheme.userNickName}}({{postTheme.userName}}) :
-            </el-row>
-            <el-row class="content">
-              {{postTheme.content}}
-            </el-row>
-            <el-row class="delete">
-              <div v-if="postTheme.userName === userName">
-                <el-link type="danger" v-on:click="deletePostTheme">删除</el-link>
-              </div>
-            </el-row>
+          </el-card>
+<!--          <el-row class="time">-->
+<!--            {{postTheme.time}}-->
+<!--          </el-row>-->
+<!--          <el-row class="userName">-->
+<!--            <div v-if="postTheme.isTeacher === 1">-->
+<!--              {{postTheme.userNickName}}({{postTheme.userName}}) (教师) :-->
+<!--            </div>-->
+<!--            <div v-else-if="postTheme.isTeacher === 2">-->
+<!--              {{postTheme.userNickName}}({{postTheme.userName}}) (管理员) :-->
+<!--            </div>-->
+<!--            <div v-else>-->
+<!--              {{postTheme.userNickName}}({{postTheme.userName}}) :-->
+<!--            </div>-->
+<!--          </el-row>-->
+<!--          <el-row class="content">-->
+<!--            {{postTheme.content}}-->
+<!--          </el-row>-->
+<!--          <el-row class="delete">-->
+<!--            <div v-if="postTheme.userName === userName">-->
+<!--              <el-link type="danger" v-on:click="deletePostTheme">删除</el-link>-->
+<!--            </div>-->
+<!--          </el-row>-->
           <el-divider>跟贴</el-divider>
-          <div v-for="(post) in postList" v-bind:key="post">
+          <div v-for="(post) in postList" v-bind:key="post.id">
             <el-row class="time">
               {{post.time}}
             </el-row>
             <el-row class="userName">
-              {{post.userNickName}}({{post.userName}}) :
+              <div v-if="post.isTeacher === 1">
+                {{post.userNickName}}({{post.userName}}) (教师) :
+              </div>
+              <div v-else-if="post.isTeacher === 2">
+                {{postTheme.userNickName}}({{postTheme.userName}}) (管理员) :
+              </div>
+              <div v-else>
+                {{post.userNickName}}({{post.userName}}) :
+              </div>
             </el-row>
             <el-row class="content">
               {{post.content}}
@@ -62,6 +112,7 @@
 </template>
 
 <style scoped>
+@import "../../../assets/css/back.css";
   .buttons {
     margin-bottom: 10px;
   }
@@ -90,13 +141,16 @@ export default {
   components: {StudentNav, StudentHeading},
   data: function () {
     return {
+      userName: '前端测试用户名',
+      userNickName: '前端测试姓名',
       postTheme: {
         id: '测试id',
         userName: 'admin',
         userNickName: '学生1',
         title: '前端测试贴标题',
         content: '前端测试贴内容',
-        time: '111'
+        time: '111',
+        isTeacher: 1
       },
       input: {
         content: ''
@@ -106,37 +160,43 @@ export default {
         userName: '学号1',
         userNickName: '学生1',
         content: '课程评价内容1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
-        time: '2021-11-19 11:11:11'
+        time: '2021-11-19 11:11:11',
+        isTeacher: 0
       }, {
         id: '1',
         userName: '学号2',
         userNickName: '学生2',
         content: '课程评价内容2',
-        time: '2021-11-19 11:11:11'
+        time: '2021-11-19 11:11:11',
+        isTeacher: 1
       }, {
         id: '1',
         userName: '学号3',
         userNickName: '学生3',
         content: '课程评价内容3',
-        time: '2021-11-19 11:11:11'
+        time: '2021-11-19 11:11:11',
+        isTeacher: 0
       }, {
         id: '1',
         userName: 'admin',
         userNickName: '学生1',
         content: '课程评价内容1',
-        time: '2021-11-19 11:11:11'
+        time: '2021-11-19 11:11:11',
+        isTeacher: 0
       }, {
         id: '1',
         userName: '学号2',
         userNickName: '学生2',
         content: '课程评价内容2',
-        time: '2021-11-19 11:11:11'
+        time: '2021-11-19 11:11:11',
+        isTeacher: 0
       }, {
         id: '1',
         userName: '学号3',
         userNickName: '学生3',
         content: '课程评价内容3',
-        time: '2021-11-19 11:11:11'
+        time: '2021-11-19 11:11:11',
+        isTeacher: 0
       }],
       time: ''
     }
@@ -210,9 +270,9 @@ export default {
         params: {
           postThemeId: that.postTheme.id,
           userName: that.userName,
-          userNickName: that.userNickName,
           content: that.input.content,
-          time: that.time
+          time: that.time,
+          isTeacher: 0
         }
       }).then(function (response) {
         console.log(response.data)

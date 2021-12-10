@@ -23,7 +23,7 @@
             </el-button>
         </div>
         <div class="register-button">
-            <el-button id="button_re" type="primary" plain="true" size="small" v-on:click="goToTeacherRegister">
+            <el-button id="button_re" type="primary" :plain="true" size="small" v-on:click="goToTeacherRegister">
               注册
             </el-button>
         </div>
@@ -54,7 +54,7 @@ export default {
   methods: {
     goToTeacherHead: function () {
       let that = this
-      let debug = true
+      let debug = false
       if (debug) {
         if (that.userName === 'admin' && that.userPassWord === '123456') {
           let loginInfo = {userName: 'admin', userNickName: '前端测试教师'}

@@ -1,8 +1,67 @@
-import time
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .base_mysql import MySQL
+
+
+class AdminChange(APIView):
+    def get(self, request):
+        userName = str(request.GET.get('userName', None))  # 管理员账号
+        userPassWord0 = str(request.GET.get('userPassWord0', None))  # 原密码
+        userPassWord1 = str(request.GET.get('userPassWord1', None))  # 新密码
+        userPassWord2 = str(request.GET.get('userPassWord2', None))  # 确认新密码
+        sql = MySQL()
+        result = sql.findAdmin(userName)
+        print(result)
+        if userPassWord0 != result[0][1]:
+            return Response(1)
+        elif userPassWord2 != userPassWord1:
+            return Response(2)
+        else:
+            sql.adminChange(userName, userPassWord1)
+            return Response(0)
+
+
+class GetTeacherList(APIView):
+    def get(self, request):
+        sql = MySQL()
+        result = sql.getTeacherList()
+
+        teacherList = []
+        for item in result:
+            teacherList.append(dict([("id", item[0]), ("name", item[1])]))
+        print(teacherList)
+        return Response(teacherList)
+
+
+class GetStudentList(APIView):
+    def get(self, request):
+        sql = MySQL()
+        result = sql.getStudentList()
+
+        studentList = []
+        for item in result:
+            studentList.append(dict([("id", item[0]), ("name", item[1])]))
+        print(studentList)
+        return Response(studentList)
+
+
+class AdminLogin(APIView):
+    def get(self, request):
+        userName = str(request.GET.get('userName', None))
+        userPassWord = str(request.GET.get('userPassWord', None))
+
+        sql = MySQL()
+        result = sql.findAdmin(userName)
+        flag = not not result
+
+        if flag:
+            # 有该管理员
+            if userPassWord == result[0][1]:
+                return Response(dict([('value', 0), ('userNickName', result[0][2])]))
+            else:
+                return Response(dict([('value', 2)]))
+        else:
+            return Response(dict([('value', 1)]))
 
 
 class DeletePostTheme(APIView):
@@ -33,12 +92,14 @@ class BuildPost(APIView):
     def get(self, request):
         postThemeId = str(request.GET.get("postThemeId", None))
         userName = str(request.GET.get("userName", None))
-        userNickName = str(request.GET.get("userNickName", None))
         content = str(request.GET.get("content", None))
         time = str(request.GET.get("time", None))
 
+        isTeacher = str(request.GET.get("isTeacher", None))
+        # isTeacher = 1 if isTeacher == "true" else 0
+
         sql = MySQL()
-        sql.buildPost(postThemeId, userName, content, time)
+        sql.buildPost(postThemeId, userName, content, time, isTeacher)
         return Response(0)
 
 
@@ -54,20 +115,24 @@ class GetPostList(APIView):
                              "userName": i[1],
                              "userNickName": i[2],
                              "content": i[3],
-                             "time": i[4]})
+                             "time": i[4],
+                             "isTeacher": i[5]})
+        postList.sort(key=lambda x: x['time'], reverse=True)
         return Response(postList)
 
 
 class BuildPostTheme(APIView):
     def get(self, request):
         userName = str(request.GET.get("userName", None))
-        userNickName = str(request.GET.get("userNickName", None))
         title = str(request.GET.get("title", None))
         content = str(request.GET.get("content", None))
         time = str(request.GET.get("time", None))
+        isTeacher = str(request.GET.get("isTeacher", None))
+
+        # isTeacher = 1 if isTeacher == "true" else 0
 
         sql = MySQL()
-        sql.buildPostTheme(userName, title, content, time)
+        sql.buildPostTheme(userName, title, content, time, isTeacher)
 
         return Response(0)
 
@@ -84,7 +149,9 @@ class GetPostThemeList(APIView):
                                   "userNickName": i[1],
                                   "title": i[2],
                                   "content": i[3],
-                                  "time": i[4]})
+                                  "time": i[4],
+                                  "isTeacher": i[6]})
+        postThemeList.sort(key=lambda x: x['id'])
         return Response(postThemeList)
 
 
@@ -297,12 +364,13 @@ class GetStudentCourseList(APIView):
         for item in result:
             studentCourseList.append({'id': item[0], 'name': item[1], 'teacherName': item[2], 'introduction': item[5] if
             item[5] is not None else '', 'materialList': [], 'm_id': item[3] if item[3] is not None else '',
-                               'm_name': item[4] if item[4] is not None else ''})
+                                      'm_name': item[4] if item[4] is not None else ''})
 
         i = 0
         while i < len(studentCourseList):
             if studentCourseList[i]['m_id'] != '' and len(studentCourseList[i]['materialList']) == 0:
-                studentCourseList[i]['materialList'].append({'id': studentCourseList[i]['m_id'], 'name': studentCourseList[i]['m_name']});
+                studentCourseList[i]['materialList'].append(
+                    {'id': studentCourseList[i]['m_id'], 'name': studentCourseList[i]['m_name']});
 
             if i != len(studentCourseList) - 1 and studentCourseList[i]['id'] == studentCourseList[i + 1]['id']:
                 studentCourseList[i]['materialList'].append(
@@ -316,6 +384,7 @@ class GetStudentCourseList(APIView):
             print(item['id'], item['name'], item['teacherName'], item['introduction'])
 
         return Response(studentCourseList)
+
 
 class DropCourse(APIView):
     def get(self, request):
@@ -386,12 +455,13 @@ class GetTeacherCourseList(APIView):
         for item in result:
             teacherCourseList.append({'id': item[0], 'name': item[1], 'teacherName': item[2], 'introduction': item[5] if
             item[5] is not None else '', 'materialList': [], 'm_id': item[3] if item[3] is not None else '',
-                               'm_name': item[4] if item[4] is not None else ''})
+                                      'm_name': item[4] if item[4] is not None else ''})
 
         i = 0
         while i < len(teacherCourseList):
             if teacherCourseList[i]['m_id'] != '' and len(teacherCourseList[i]['materialList']) == 0:
-                teacherCourseList[i]['materialList'].append({'id': teacherCourseList[i]['m_id'], 'name': teacherCourseList[i]['m_name']});
+                teacherCourseList[i]['materialList'].append(
+                    {'id': teacherCourseList[i]['m_id'], 'name': teacherCourseList[i]['m_name']});
 
             if i != len(teacherCourseList) - 1 and teacherCourseList[i]['id'] == teacherCourseList[i + 1]['id']:
                 teacherCourseList[i]['materialList'].append(
@@ -405,6 +475,7 @@ class GetTeacherCourseList(APIView):
             print(item['id'], item['name'], item['teacherName'], item['introduction'])
 
         return Response(teacherCourseList)
+
 
 class GetCourseInfo(APIView):
     def get(self, request):
@@ -431,28 +502,38 @@ class BuildCourse(APIView):
             if not sql.getMaterialName(item):
                 return Response(1)
 
-        sql.buildCourse(userName, course['name'], course['materialIdList'])
+        sql.buildCourse(userName, course['name'], course['materialIdList'], course['introduction'])
         return Response(0)
 
 
 class ChangeCourse(APIView):
     def get(self, request):
-        teacher_id = str(request.GET.get('userName', None))
         course_id = str(request.GET.get('id', None))
-        course = request.GET.get('course', None)
-        # 教师改课程名，只能改自己开的课程的名，成功返回0
-        course = eval(course)
+        course_name = str(request.GET.get('name', None))
+        introduction = str(request.GET.get('introduction', None))
+        teacher_id = str(request.GET.get('userName', None))
 
-        if course['name'] == '':
+        materialIdString = str(request.GET.get('materialIdString', None))
+
+        print(materialIdString)
+
+        materialIdList = materialIdString.split(',')
+
+        # course = request.GET.get('course', None)
+        # 教师改课程名，只能改自己开的课程的名，成功返回0
+        # course = eval(course)
+
+        if course_name == '':
             return Response(2)
 
         sql = MySQL()
-        for item in course['materialIdList']:
+
+        for item in materialIdList:
             if item == '':
                 continue
             if not sql.getMaterialName(item):
                 return Response(1)
-        sql.changeCourse(teacher_id, course_id, course['name'], course['materialIdList'])
+        sql.changeCourse(teacher_id, course_id, course_name, materialIdList, introduction)
         return Response(0)
 
 
