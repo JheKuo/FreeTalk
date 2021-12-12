@@ -11,24 +11,24 @@
         <el-main style="padding-left: 10%; padding-right: 10%">
           <el-page-header @back="returnStudentAllComment" :content="courseName" style="margin-bottom: 2%">
           </el-page-header>
-          <el-card shadow="hover" style="margin-bottom: 2%">
+          <el-card shadow="hover" style="margin-bottom: 1%">
             <el-row>
-              <el-col :offset="1" :span="2">
+              <el-col :offset="1" :span="3">
+                <el-image :src="courseImg" lazy></el-image>
                 <el-row>
-                  <el-image :src="courseImg" lazy></el-image>
+                  &nbsp;
                 </el-row>
-<!--                <el-row>-->
-<!--                  <div><strong>评分</strong></div>-->
-<!--                  <el-rate-->
-<!--                    v-model="courseAssessment"-->
-<!--                    disabled-->
-<!--                    show-score-->
-<!--                    text-color="#ff9900"-->
-<!--                    score-template="{courseAssessment}">-->
-<!--                  </el-rate>-->
-<!--                </el-row>-->
+                <el-row style="text-align: center; font-size: medium">
+                  课程评分
+                </el-row>
+                <el-rate
+                  align="center"
+                  v-model="courseAvgDegree"
+                  disabled
+                  show-score
+                  text-color="#ff9900"></el-rate>
               </el-col>
-              <el-col :offset="2" :span="18">
+              <el-col :offset="2" :span="17">
                 <el-row>
                   <el-col :span="18">
                     <strong>{{courseName}}</strong>
@@ -39,11 +39,11 @@
                   </el-divider>
                 </el-row>
                 <el-row>
-                  <div style="font-size: 12px">
-                    <h4>课程概述</h4>
-                    <p>{{courseIntroduction}}</p>
-                    <h4>课程资料</h4>
-                    <p>{{courseMaterial}}</p>
+                  <div style="font-size: small">
+                    <h3>课程介绍</h3>
+                    <span v-html="courseIntroduction"></span>
+                    <h3>课程资料</h3>
+                    <p><a v-for="(m) in courseMaterialList" v-bind:key="m.id">{{ m.name }}，</a></p>
                   </div>
                 </el-row>
               </el-col>
@@ -56,7 +56,8 @@
           <div v-for="(comment) in commentList" v-bind:key="comment">
             <el-row class="time">
               <el-col :span="1">
-                <el-avatar></el-avatar>
+                <el-avatar :src="studentImg">
+                </el-avatar>
               </el-col>
               <el-col :span="3">
                 <el-row class="userName">
@@ -65,12 +66,12 @@
                 <el-row>{{comment.time}}</el-row>
               </el-col>
               <el-col :span="20" class="content">
-                <el-row class="content-of-comment">
-                {{comment.content}}
+                <el-row class="content-of-comment" style="color: black">
+                  <span v-html="comment.content"></span>
                 </el-row>
                 <el-row class="delete">
                   <div v-if="comment.userName === userName">
-                    <el-link type="danger" v-on:click="deleteComment(comment.id)">删除</el-link>
+                    <el-link type="danger">删除</el-link>
                   </div>
                 </el-row>
               </el-col>
@@ -109,27 +110,30 @@
 import TeacherNav from '../TeacherNav'
 import TeacherHeading from '../TeacherHeading'
 import CourseImg from '../../../assets/img/buaa_class_img.jpg'
+import StudentImg from '../../../assets/img/student.png'
 export default {
   name: 'TeacherComment',
   components: {TeacherNav, TeacherHeading},
   data: function () {
     return {
-      userName: '前端测试用户名',
-      userNickName: '前端测试姓名',
-      courseId: '前端测试课程id',
-      courseName: '前端测试课程名称',
-      courseIntroduction: '前端测试课程介绍',
-      courseAssessment: '5',
-      courseMaterial: '前端测试学习资料',
+      loading: true,
+      userName: '',
+      userNickName: '',
+      courseId: '',
+      courseName: '',
+      courseIntroduction: '',
+      courseMaterialList: [],
+      courseAvgDegree: 1.0,
       contentInput: '',
       courseImg: CourseImg,
+      studentImg: StudentImg,
       time: '',
       commentList: [{
         id: 1,
-        userName: '学号1',
-        userNickName: '学生1',
-        content: '课程评价内容1',
-        time: '2021-11-19 11:11:11'
+        userName: '',
+        userNickName: '',
+        content: '',
+        time: ''
       }
       ]
     }
@@ -138,10 +142,8 @@ export default {
     this.userName = this.cookie.getCookie('userName')
     this.userNickName = this.cookie.getCookie('userNickName')
     this.courseId = this.$route.query.courseId
-    this.courseName = this.$route.query.courseName
-    this.courseIntroduction = this.$route.query.courseIntroduction
-    // this.courseAssessment = this.$route.query.courseAssessment
-    this.courseMaterial = this.$route.query.courseMaterial
+    this.getCourseInfo()
+    this.getDegree()
     this.getCommentList()
   },
   methods: {
@@ -155,8 +157,26 @@ export default {
       let s = dt.getSeconds().toString().padStart(2, '0')
       this.time = yyyy + '-' + MM + '-' + dd + ' ' + h + ':' + m + ':' + s
     },
+    getCourseInfo: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetCourseInfo/',
+        method: 'get',
+        params: {
+          courseId: that.courseId
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.courseName = response.data.name
+        that.courseIntroduction = response.data.introduction
+        that.courseMaterialList = response.data.materialList
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     getCommentList: function () {
       let that = this
+      that.loading = true
       this.$http.request({
         url: that.$url + 'GetCommentList/',
         method: 'get',
@@ -165,9 +185,27 @@ export default {
         }
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         that.commentList = response.data
       }).catch(function (error) {
         console.log(error)
+        that.loading = false
+      })
+    },
+    getDegree: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetDegree/',
+        method: 'get',
+        params: {
+          id: that.courseId
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.courseAvgDegree = response.data.avgDegree
+        if (that.courseAvgDegree !== 5) {
+          that.courseAvgDegree = Number(that.courseAvgDegree).toFixed(1)
+        }
       })
     },
     returnStudentAllComment: function () {

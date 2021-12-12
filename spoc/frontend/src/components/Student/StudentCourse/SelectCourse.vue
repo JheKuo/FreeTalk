@@ -25,7 +25,10 @@
                 circle></el-button>
             </el-col>
           </el-row>
-          <el-card v-for="(course, index) in showCourseList" :key="index" shadow="hover" style="margin-bottom: 2%">
+          <el-card v-for="(course, index) in showCourseList" :key="index"
+                   v-loading="loading"
+                   shadow="hover"
+                   style="margin-bottom: 2%">
             <el-row>
               <el-col :offset="1" :span="2">
                 <el-image :src="courseImg" lazy></el-image>
@@ -37,7 +40,7 @@
                   </el-link>
                 </el-row>
                 <el-row>
-                  <el-tag type="primary">课程编号<span>&nbsp;&nbsp;{{course.id}}</span></el-tag>
+                  <el-tag type="info">课程编号<span>&nbsp;&nbsp;{{course.id}}</span></el-tag>
                 </el-row>
               </el-col>
               <el-col :span="2">
@@ -48,7 +51,7 @@
             </el-row>
           </el-card>
           <el-dialog title="提示" :visible.sync="courseInfoVisible" width="40%">
-            <el-descriptions class="info" direction="vertical">
+            <el-descriptions class="info">
               <el-descriptions-item label="课程名称(ID)">
                 &nbsp;&nbsp;
                 {{courseInfo.name}}({{courseInfo.id}})
@@ -58,42 +61,13 @@
                 <a v-for="(m) in courseInfo.materialList" v-bind:key="m.id">{{ m.name }}({{ m.id }})，</a>
               </el-descriptions-item>
               <el-descriptions-item label="课程介绍">&nbsp;&nbsp;
-                {{ courseInfo.introduction }}
+                <span v-html="courseInfo.introduction"></span>
               </el-descriptions-item>
             </el-descriptions>
             <div slot="footer" class="dialog-footer">
               <el-button type="primary" @click="courseInfoVisible = false">确 定</el-button>
             </div>
           </el-dialog>
-<!--          <el-table :data="courseList" v-loading="loading">-->
-<!--            <el-table-column label="课程ID" prop="id"></el-table-column>-->
-<!--            <el-table-column label="课程名称（可点击查看信息）" prop="name">-->
-<!--              <template slot-scope="scope">-->
-<!--                <el-link type="primary" v-on:click="getCourseInfo(scope.$index)">-->
-<!--                  {{ courseList[scope.$index].name }}-->
-<!--                </el-link>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--            <el-table-column label="选课">-->
-<!--              <template slot-scope="scope">-->
-<!--                <el-button v-on:click="selectCourse(scope.$index)" type="primary">选课</el-button>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--          </el-table>-->
-<!--          <el-dialog title="提示" :visible.sync="courseInfoVisible" width="40%">-->
-<!--            <el-row class="info">-->
-<!--              课程名称(id)：{{ courseInfo.name }}({{ courseInfo.id }})-->
-<!--            </el-row>-->
-<!--            <el-row class="info">-->
-<!--              学习材料(id)：<a v-for="(m) in courseInfo.materialList" v-bind:key="m.id">{{ m.name }}({{ m.id }})，</a>-->
-<!--            </el-row>-->
-<!--            <el-row class="info">-->
-<!--              课程介绍：{{ courseInfo.introduction }}-->
-<!--            </el-row>-->
-<!--            <div slot="footer" class="dialog-footer">-->
-<!--              <el-button type="primary" @click="courseInfoVisible = false">确 定</el-button>-->
-<!--            </div>-->
-<!--          </el-dialog>-->
         </el-main>
       </el-container>
     </el-container>
@@ -142,20 +116,9 @@ export default {
           id: '02',
           name: '材料02'
         }],
-        introduction: ''
-      },
-        {
-          id: '2',
-          name: '课程2',
-          materialList: [{
-            id: '03',
-            name: '材料03'
-          }, {
-            id: '04',
-            name: '材料04'
-          }],
-          introduction: ''
-        }],
+        introduction: '',
+        avgDegree: 2.0
+      }],
       showCourseList: this.courseList,
       inputSearch: ''
     }

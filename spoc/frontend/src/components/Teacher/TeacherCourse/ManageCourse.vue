@@ -25,7 +25,10 @@
                 circle></el-button>
             </el-col>
           </el-row>
-          <el-card v-for="(course, index) in showMyCourseList" :key="index" shadow="hover" style="margin-bottom: 2%">
+          <el-card v-for="(course, index) in showMyCourseList" :key="index"
+                   v-loading="loading"
+                   shadow="hover"
+                   style="margin-bottom: 2%">
             <el-row>
               <el-col :offset="2" :span="2">
                 <el-image :src="courseImg" lazy></el-image>
@@ -37,7 +40,7 @@
                   </el-link>
                 </el-row>
                 <el-row>
-                  <el-tag type="primary">课程编号&nbsp;&nbsp;<span>{{course.id}}</span></el-tag>
+                  <el-tag type="info">课程编号&nbsp;&nbsp;<span>{{course.id}}</span></el-tag>
                 </el-row>
               </el-col>
               <el-col :span="2">
@@ -45,12 +48,11 @@
                   <el-button type="primary" icon="el-icon-edit" v-on:click="changeCourse(index)">编辑</el-button>
                 </el-button-group>
                 <el-button-group>
-                  <el-button type="primary" icon="el-icon-delete" v-on:click="cancelCourse(index)">停课</el-button>
+                  <el-button type="danger" icon="el-icon-delete" v-on:click="cancelCourse(index)">停课</el-button>
                 </el-button-group>
               </el-col>
             </el-row>
           </el-card>
-
           <el-dialog title="提示" :visible.sync="courseInfoVisible" width="40%">
             <el-descriptions class="info" direction="vertical">
               <el-descriptions-item label="课程名称(ID)">
@@ -101,25 +103,11 @@ export default {
       userNickName: '',
       userName: '',
       myCourseList: [{
-        id: '1',
-        name: '课程1',
+        id: '',
+        name: '',
         materialList: [{
-          id: '01',
-          name: '材料01'
-        }, {
-          id: '02',
-          name: '材料02'
-        }],
-        introduction: ''
-      }, {
-        id: '2',
-        name: '课程2',
-        materialList: [{
-          id: '03',
-          name: '材料03'
-        }, {
-          id: '04',
-          name: '材料03'
+          id: '',
+          name: ''
         }],
         introduction: ''
       }],
@@ -161,22 +149,12 @@ export default {
       console.log(index)
       let that = this
       let materialIdString = that.showMyCourseList[index].materialIdString
-      // for (var i = 0; i < that.showMyCourseList[index].materialList.length; i++) {
-      //   if (i === 0) {
-      //     materialIdString = (that.showMyCourseList[index].materialList[i].id)
-      //   } else {
-      //     materialIdString = materialIdString + ',' + (that.showMyCourseList[index].materialList[i].id)
-      //   }
-      // }
       this.$router.push({
         path: '/TeacherCourse/ChangeCourse',
         // 这里不能使用params传递参数，详见：
         // https://blog.csdn.net/qq_37548296/article/details/90446430
         query: {
           id: that.showMyCourseList[index].id,
-          name: that.showMyCourseList[index].name,
-          materialIdString: materialIdString,
-          introduction: that.showMyCourseList[index].introduction
         }
       })
     },

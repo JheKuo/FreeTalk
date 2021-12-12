@@ -27,9 +27,12 @@
                     circle></el-button>
                 </el-col>
               </el-row>
-              <el-card v-for="(postTheme, index) in showPostThemeList" :key="index" shadow="hover" style="margin-bottom: 2%">
+              <el-card v-for="(postTheme, index) in showPostThemeList" :key="index"
+                       v-loading="loading"
+                       shadow="hover"
+                       style="margin-bottom: 2%">
                 <div class="clearfix">
-                  <span><strong>{{postTheme.title}}</strong></span>
+                  <span>{{postTheme.title}}</span>
                   <el-button style="float: right; padding: 3px 0" type="text"
                              v-on:click="enterPostTheme(index)">进入帖子</el-button>
                 </div>
@@ -48,13 +51,13 @@
             <el-col :span="8" :offset="2" class="right-information">
               <el-card shadow="hover" style="width: 100%">
                 <el-row>
-                  <el-col :span="12">
-                    <el-empty :image-size="80" style="margin: 0 !important; padding: 0 !important;"></el-empty>
+                  <el-col :span="11">
+                    <el-image :src="teacherImg" lazy></el-image>
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="12" :offset="1">
                     <el-descriptions :column="1">
                       <el-descriptions-item label="用户名">{{userNickName}}</el-descriptions-item>
-                      <el-descriptions-item label="工号号">{{userName}}</el-descriptions-item>
+                      <el-descriptions-item label="工号">{{userName}}</el-descriptions-item>
                       <el-descriptions-item label="已发帖子">{{discussNum}}</el-descriptions-item>
                     </el-descriptions>
                   </el-col>
@@ -76,7 +79,7 @@
                         <quill-editor ref="text" v-model="input.content" style="height: 300px"></quill-editor>
                       </el-col>
                     </el-row>
-                    <div slot="footer" class="dialog-footer">
+                    <div slot="footer" class="dialog-footer" style="margin-top: 10%">
                       <el-button @click="buildThemeVisible = false">取消</el-button>
                       <el-button type="primary" @click="buildPostTheme">确定</el-button>
                     </div>
@@ -131,6 +134,7 @@ import {quillEditor} from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import TeacherImg from '../../../assets/img/teacher.png'
 export default {
   name: 'TeacherAllDiscuss',
   components: {TeacherNav, TeacherHeading, quillEditor},
@@ -145,6 +149,7 @@ export default {
         title: '',
         content: ''
       },
+      teacherImg: TeacherImg,
       postThemeList: [{
         id: '1',
         userName: 'admin',
@@ -255,7 +260,7 @@ export default {
           that.buildThemeVisible = false
           that.getTeacherDiscussNum()
           that.getPostThemeList()
-          that.postThemeInput = {
+          that.input = {
             title: '',
             content: ''
           }

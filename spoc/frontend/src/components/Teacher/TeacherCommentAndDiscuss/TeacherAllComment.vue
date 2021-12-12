@@ -27,50 +27,39 @@
                     circle></el-button>
                 </el-col>
               </el-row>
-              <el-card v-for="(course, index) in showCourseList" :key="index" shadow="hover" style="margin-bottom: 2%">
-                <el-row>
-                  <el-col :offset="1" :span="2">
+              <el-card
+                v-for="(course, index) in showCourseList" :key="index"
+                v-loading="loading"
+                shadow="hover"
+                style="font-size: small; margin-bottom: 2%;">
+                <div slot="header" class="clearfix">
+                  <el-col :span="2">
                     <el-image :src="courseImg" lazy></el-image>
                   </el-col>
-                  <el-col :offset="2" :span="18">
-                    <el-row>
-                      <el-col :span="18">
-                        <strong>{{course.name}}</strong>
-                      </el-col>
-                      <el-col :span="4" :offset="2">
-                        <el-button v-on:click="commentCourse(index)" type="text" style="float: right">查看</el-button>
-                      </el-col>
-                    </el-row>
-                    <el-row>
-                      <el-divider>
-                      </el-divider>
-                    </el-row>
-                    <el-row>
-                      <div style="font-size: 12px; text-overflow: ellipsis ;max-height: 100px; overflow: hidden; white-space: nowrap;">
-                        {{course.introduction}}
-                      </div>
-                    </el-row>
-                  </el-col>
-<!--                  <el-col :offset="1" :span="3">-->
-<!--                    <div><strong>评分</strong></div>-->
-<!--                    <el-rate-->
-<!--                      v-model="course.assessment"-->
-<!--                      disabled-->
-<!--                      show-score-->
-<!--                      text-color="#ff9900"-->
-<!--                      score-template="{course.assessment}">-->
-<!--                    </el-rate>-->
-<!--                  </el-col>-->
-                </el-row>
+                  {{ course.name }}
+                  <el-button v-on:click="commentCourse(index)" type="text" style="font-size: small; float: right">
+                    查看评价
+                  </el-button>
+                  <el-rate
+                    v-model="course.avgDegree"
+                    disabled
+                    show-score
+                    text-color="#ff9900">
+                  </el-rate>
+                </div>
+                <div
+                  style="font-size: smaller; text-overflow: ellipsis ;max-height: 50px; overflow: hidden; white-space: nowrap;">
+                  <span v-html="course.introduction"></span>
+                </div>
               </el-card>
             </el-col>
             <el-col :span="8" :offset="2" class="right-information">
               <el-card shadow="hover" style="width: 100%">
                 <el-row>
-                  <el-col :span="12">
-                    <el-empty :image-size="80" style="margin: 0 !important; padding: 0 !important;"></el-empty>
+                  <el-col :span="11">
+                    <el-image :src="teacherImg" lazy></el-image>
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="12" :offset="1">
                     <el-descriptions :column="1">
                       <el-descriptions-item label="用户名">{{userNickName}}</el-descriptions-item>
                       <el-descriptions-item label="工号">{{userName}}</el-descriptions-item>
@@ -106,6 +95,7 @@
 import TeacherNav from '../TeacherNav'
 import TeacherHeading from '../TeacherHeading'
 import CourseImg from '../../../assets/img/buaa_class_img.jpg'
+import TeacherImg from '../../../assets/img/teacher.png'
 export default {
   name: 'TeacherAllComment',
   components: {TeacherNav, TeacherHeading},
@@ -117,6 +107,7 @@ export default {
       courseNum: '1',
       inputSearch: '',
       showIt: false,
+      teacherImg: TeacherImg,
       courseImg: CourseImg,
       courseList: [{
         id: '1',
@@ -177,11 +168,7 @@ export default {
       this.$router.push({
         path: '/TeacherCommentAndDiscuss/TeacherComment',
         query: {
-          courseId: that.showCourseList[index].id,
-          courseName: that.showCourseList[index].name,
-          courseIntroduction: that.showCourseList[index].introduction,
-          // courseAssessment: that.courseList[index].courseAssessment,
-          courseMaterial: that.showCourseList[index].materialNameString
+          courseId: that.showCourseList[index].id
         }
       })
     },

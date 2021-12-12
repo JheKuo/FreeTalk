@@ -17,9 +17,6 @@
           <el-card shadow="hover" style="margin-bottom: 2%">
             <el-row>
               <el-col :offset="2" :span="2">
-<!--                <el-row>-->
-<!--                  <el-empty :image-size="80" style="margin: 0 !important; padding: 0 !important;"></el-empty>-->
-<!--                </el-row>-->
                 <el-row class="time">
                   {{postTheme.time}}
                 </el-row>
@@ -38,7 +35,7 @@
               <el-col :offset="2" :span="16">
                 <el-row class="content" v-html="postTheme.content">
                 </el-row>
-                <el-row class="delete">
+                <el-row class="delete" :span="1" style="float: right">
                   <div v-if="postTheme.userName === userName">
                     <el-link type="danger" v-on:click="deletePostTheme">删除</el-link>
                   </div>
@@ -61,9 +58,11 @@
           </el-dialog>
           <el-divider>跟贴</el-divider>
           <div v-for="(post, index) in postList" v-bind:key="index">
-            <el-row>
-              <el-col :span="1">
-                <el-avatar></el-avatar>
+            <el-row v-loading="loading">
+              <el-col :span="1" :offset="1">
+                <el-image v-if="post.isTeacher === 1" :src="teacherImg" lazy></el-image>
+                <el-image v-else-if="post.isTeacher === 2" :src="adminImg" lazy></el-image>
+                <el-image v-else :src="studentImg" lazy></el-image>
               </el-col>
               <el-col :span="3">
                 <el-row class="time">
@@ -81,8 +80,7 @@
                   </div>
                 </el-row>
               </el-col>
-              <el-col class="content" :span="19" v-html="post.content">
-<!--                {{post.content}}-->
+              <el-col class="content" :span="18" v-html="post.content">
               </el-col>
               <el-col class="delete" :span="1" style="float: right">
                 <div v-if="post.userName === userName">
@@ -123,68 +121,40 @@
 <script>
 import StudentNav from '../StudentNav'
 import StudentHeading from '../StudentHeading'
+import StudentImg from '../../../assets/img/student.png'
+import TeacherImg from '../../../assets/img/teacher.png'
+import AdminImg from '../../../assets/img/admin.jpg'
 export default {
   name: 'StudentDiscuss',
   components: {StudentNav, StudentHeading},
   data: function () {
     return {
-      userName: '前端测试用户名',
-      userNickName: '前端测试姓名',
+      loading: true,
+      userName: '',
+      userNickName: '',
       dialogFormVisible: false,
+      studentImg: StudentImg,
+      teacherImg: TeacherImg,
+      adminImg: AdminImg,
       postThemeId: 0,
       postTheme: {
-        id: '测试id',
-        userName: 'admin',
-        userNickName: '学生1',
-        title: '前端测试贴标题',
-        content: '前端测试贴内容',
-        time: '111',
+        id: '',
+        userName: '',
+        userNickName: '',
+        title: '',
+        content: '',
+        time: '',
         isTeacher: 1
       },
       input: {
         content: ''
       },
       postList: [{
-        id: '1',
-        userName: '学号1',
-        userNickName: '学生1',
-        content: '课程评价内容1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
-        time: '2021-11-19 11:11:11',
-        isTeacher: 0
-      }, {
-        id: '1',
-        userName: '学号2',
-        userNickName: '学生2',
-        content: '课程评价内容2',
-        time: '2021-11-19 11:11:11',
-        isTeacher: 1
-      }, {
-        id: '1',
-        userName: '学号3',
-        userNickName: '学生3',
-        content: '课程评价内容3',
-        time: '2021-11-19 11:11:11',
-        isTeacher: 0
-      }, {
-        id: '1',
-        userName: 'admin',
-        userNickName: '学生1',
-        content: '课程评价内容1',
-        time: '2021-11-19 11:11:11',
-        isTeacher: 0
-      }, {
-        id: '1',
-        userName: '学号2',
-        userNickName: '学生2',
-        content: '课程评价内容2',
-        time: '2021-11-19 11:11:11',
-        isTeacher: 0
-      }, {
-        id: '1',
-        userName: '学号3',
-        userNickName: '学生3',
-        content: '课程评价内容3',
-        time: '2021-11-19 11:11:11',
+        id: '',
+        userName: '',
+        userNickName: '',
+        content: '',
+        time: '',
         isTeacher: 0
       }],
       time: ''
@@ -256,6 +226,7 @@ export default {
     },
     getPostList: function () {
       let that = this
+      that.loading = true
       this.$http.request({
         url: that.$url + 'GetPostList/',
         method: 'get',
@@ -264,9 +235,11 @@ export default {
         }
       }).then(function (response) {
         console.log(response.data)
+        that.loading = false
         that.postList = response.data
       }).catch(function (error) {
         console.log(error)
+        that.loading = false
       })
     },
     buildPost: function () {

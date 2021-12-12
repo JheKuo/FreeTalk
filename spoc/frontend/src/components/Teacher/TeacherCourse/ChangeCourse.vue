@@ -18,12 +18,9 @@
             </el-col>
           </el-form-item>
           <el-form-item label="学习材料">
-<!--            <el-col :span="6" id="material_block">-->
-<!--              <el-input v-model="materialIdString"></el-input>-->
-<!--            </el-col>-->
-            <el-select v-model="materialIdString" multiple placeholder="请选择" style="width: 50%">
+            <el-select v-model="materialIdList" multiple placeholder="请选择" style="width: 50%">
               <el-option
-                v-for="(item, index) in materialList"
+                v-for="(item, index) in allMaterialList"
                 :key="index"
                 :label="item.name"
                 :value="item.id">
@@ -38,7 +35,6 @@
           <el-form-item style="margin-top: 20%">
             <el-col :span="6">
               <el-button v-on:click="changeCourse" type="primary">确认</el-button>
-<!--              <el-button v-on:click="returnManageCourse">返回</el-button>-->
             </el-col>
           </el-form-item>
         </el-form>
@@ -66,22 +62,52 @@ export default {
       userNickName: '',
       id: '',
       name: '',
+      introduction: '',
       materialIdString: '',
       materialIdList: [],
-      introduction: '',
-      materialList: ''
+      materialList: [{
+        id: '',
+        name: ''
+      }],
+      allMaterialList: [{
+        id: '',
+        name: ''
+      }]
     }
   },
   mounted () {
     this.userName = this.cookie.getCookie('userName')
     this.userNickName = this.cookie.getCookie('userNickName')
     this.id = this.$route.query.id
-    this.name = this.$route.query.name
-    this.materialIdString = this.$route.query.materialIdString
-    this.introduction = this.$route.query.introduction
+    this.getCourseInfo()
     this.getMaterialList()
   },
   methods: {
+    getCourseInfo: function () {
+      let that = this
+      that.loading = true
+      this.$http.request({
+        url: that.$url + 'GetCourseInfo/',
+        method: 'get',
+        params: {
+          courseId: that.id
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.loading = false
+        that.name = response.data.name
+        that.introduction = response.data.introduction
+        that.materialList = response.data.materialList
+        that.materialIdList = []
+        for (var i = 0; i < that.materialList.length; i++) {
+            that.materialIdList.push(that.materialList[i].id)
+        }
+        console.log(that.materialIdList)
+      }).catch(function (error) {
+        that.loading = false
+        console.log(error)
+      })
+    },
     returnManageCourse: function () {
       let that = this
       that.$router.push({
@@ -97,7 +123,7 @@ export default {
       }).then(function (response) {
         console.log(response.data)
         that.loading = false
-        that.materialList = response.data
+        that.allMaterialList = response.data
       }).catch(function (error) {
         that.loading = false
         console.log(error)
@@ -105,19 +131,13 @@ export default {
     },
     changeCourse: function () {
       let that = this
-      // that.loading = true
-      // that.materialIdList = that.materialIdString.split(',')
-      console.log(that.materialIdList)
-      console.log(that.materialIdString)
       this.$http.request({
         url: that.$url + 'ChangeCourse/',
         method: 'get',
         params: {
           id: that.id,
           name: that.name,
-          // materialIdList: that.materialIdList,
-          // 这里传List接受不到数据，改为传string
-          materialIdString: that.materialIdString.join(','),
+          materialIdString: that.materialIdList.join(','),
           introduction: that.introduction,
           userName: that.userName
         }

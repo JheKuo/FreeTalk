@@ -27,9 +27,9 @@
                     circle></el-button>
                 </el-col>
               </el-row>
-              <el-card v-for="(postTheme, index) in showPostThemeList" :key="index" shadow="hover" style="margin-bottom: 2%">
+              <el-card v-for="(postTheme, index) in showPostThemeList" :key="index" v-loading="loading" shadow="hover" style="margin-bottom: 2%">
                 <div class="clearfix">
-                  <span><strong>{{postTheme.title}}</strong></span>
+                  <span>{{postTheme.title}}</span>
                   <el-button style="float: right; padding: 3px 0" type="text"
                              v-on:click="enterPostTheme(index)">进入帖子</el-button>
                 </div>
@@ -48,10 +48,10 @@
             <el-col :span="8" :offset="2" class="right-information">
               <el-card shadow="hover" style="width: 100%">
                 <el-row>
-                  <el-col :span="12">
-                    <el-empty :image-size="80" style="margin: 0 !important; padding: 0 !important;"></el-empty>
+                  <el-col :span="11">
+                    <el-image :src="studentImg" lazy></el-image>
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="12" :offset="1">
                     <el-descriptions :column="1">
                       <el-descriptions-item label="用户名">{{userNickName}}</el-descriptions-item>
                       <el-descriptions-item label="学号">{{userName}}</el-descriptions-item>
@@ -72,11 +72,10 @@
                     </el-row>
                     <el-row style="margin-bottom: 10px">
                       <el-col>
-<!--                        <el-input v-model="input.content" placeholder="请输入贴子的主题" type="textarea" :rows="10"></el-input>-->
                         <quill-editor ref="text" v-model="input.content" style="height: 300px"></quill-editor>
                       </el-col>
                     </el-row>
-                    <div slot="footer" class="dialog-footer">
+                    <div slot="footer" class="dialog-footer" style="margin-top: 10%">
                       <el-button @click="buildThemeVisible = false">取消</el-button>
                       <el-button type="primary" @click="buildPostTheme">确定</el-button>
                     </div>
@@ -98,6 +97,7 @@ import {quillEditor} from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+import StudentImg from '../../../assets/img/student.png'
 export default {
   name: 'StudentAllDiscuss',
   components: {StudentNav, StudentHeading, quillEditor},
@@ -106,48 +106,31 @@ export default {
       loading: true,
       userName: '',
       userNickName: '',
-      discussNum: '1',
+      discussNum: '',
+      studentImg: StudentImg,
       input: {
         title: '',
         content: ''
       },
       inputSearch: '',
       postThemeList: [{
-        id: '1',
-        userName: 'admin',
-        userNickName: '学生1',
-        title: '前端测试贴标题',
-        content: '前端测试贴内容',
-        time: 'xxxx',
-        isTeacher: 1
-      },
-      {
-        id: '2',
-        userName: '学号1',
-        userNickName: '学生1',
-        title: '前端测试贴标题',
-        content: '前端测试贴内容',
-        time: 'xxxx',
+        id: '',
+        userName: '',
+        userNickName: '',
+        title: '',
+        content: '',
+        time: '',
         isTeacher: 0
       }],
       showPostThemeList: [
         {
-          id: '1',
-          userName: 'admin',
-          userNickName: '学生1',
-          title: '前端测试贴标题',
-          content: '前端测试贴内容',
-          time: 'xxxx',
+          id: '',
+          userName: '',
+          userNickName: '',
+          title: '',
+          content: '',
+          time: '',
           isTeacher: 1
-        },
-        {
-          id: '2',
-          userName: '学号1',
-          userNickName: '学生1',
-          title: '前端测试贴标题',
-          content: '前端测试贴内容',
-          time: 'xxxx',
-          isTeacher: 0
         }
       ],
       buildThemeVisible: false,
@@ -222,7 +205,7 @@ export default {
           that.buildThemeVisible = false
           that.getPostThemeList()
           that.getStudentDiscussNum()
-          that.postThemeInput = {
+          that.input = {
             title: '',
             content: ''
           }

@@ -21,6 +21,31 @@ import pymysql
 
 class MySQL:
 
+    def getCourseInfo(self, courseId):
+        connection, cursor = self.connectDatabase()
+        result = ""
+        instruction = "SELECT ans.id, ans.n, teacher.name, ans.mid, ans.mn, ans.i, ans.degree " \
+                      "FROM " \
+                      " (SELECT c.id, c.introduction, c.name, cm.material_id, cm.name, c.degree " \
+                      "FROM course as c LEFT OUTER JOIN (select * from material, course_material where course_material.material_id=material.id) AS cm " \
+                      "ON (c.id=cm.course_id) ) AS ans(id, i, n,mid, mn, degree), teacher_course AS tc, teacher " \
+                      "WHERE tc.course_id=ans.id AND tc.teacher_id=teacher.id AND ans.id=%s"
+
+        cursor.execute(instruction, [courseId])
+        result = cursor.fetchall()
+        self.closeDatabase(connection, cursor)
+        return result
+
+    def GetCourseDegree(self, id):
+        result = self.getCourseDegree(id)
+        # 返回课程对应的评价表，计算平均值交给前端
+        # 评价表为{1：float， 2：float， 3：float， 4：float， 5：float, totalNum: number, avgDegree(平均分): float}
+        # print(result)
+        dic = {"1": result[0][1], "2": result[0][2], "3": result[0][3],
+               "4": result[0][4], "5": result[0][5], "totalNum": result[0][6],
+               "avgDegree": result[0][7]}
+        print(dic)
+
     def getPostTheme(self, postthemeId):
         connection, cursor = self.connectDatabase()
         result = ""
@@ -588,11 +613,11 @@ class MySQL:
     def getCourseList(self):
         connection, cursor = self.connectDatabase()
 
-        instruction = "SELECT ans.id, ans.n, teacher.name, ans.mid, ans.mn, ans.i " \
+        instruction = "SELECT ans.id, ans.n, teacher.name, ans.mid, ans.mn, ans.i, ans.degree " \
                       "FROM " \
-                      " (SELECT c.id, c.introduction, c.name, cm.material_id, cm.name " \
+                      " (SELECT c.id, c.introduction, c.name, cm.material_id, cm.name, c.degree " \
                       "FROM course as c LEFT OUTER JOIN (select * from material, course_material where course_material.material_id=material.id) AS cm " \
-                      "ON (c.id=cm.course_id) ) AS ans(id, i, n,mid, mn), teacher_course AS tc, teacher " \
+                      "ON (c.id=cm.course_id) ) AS ans(id, i, n,mid, mn, degree), teacher_course AS tc, teacher " \
                       "WHERE tc.course_id=ans.id AND tc.teacher_id=teacher.id "
         # "ORDER BY ans.id"
 
@@ -656,7 +681,7 @@ class MySQL:
     def registerStudent(self, student_id, password, student_name):
         connection, cursor = self.connectDatabase()
         try:
-            instruction = "INSERT INTO student " \
+            instruction = "INSERT INTO student(id, password, name) " \
                           "values(%s, %s, %s)"
 
             cursor.execute(instruction, [student_id, password, student_name])
@@ -670,7 +695,7 @@ class MySQL:
     def registerTeacher(self, teacher_id, password, teacher_name):
         connection, cursor = self.connectDatabase()
         try:
-            instruction = "INSERT INTO teacher " \
+            instruction = "INSERT INTO teacher(id, password, name) " \
                           "values(%s, %s, %s)"
 
             cursor.execute(instruction, [teacher_id, password, teacher_name])
@@ -779,24 +804,33 @@ class MySQL:
         #               ")"
         # cursor.execute(instruction, [course_id])
         # connection.commit()
-        try:
+        print(course_id)
+
+
+        instruction = "SELECT comment_id from course_comment WHERE course_id=%s"
+        cursor.execute(instruction, [course_id])
+        result = cursor.fetchall()
+        print(result)
+        for i in result:
             instruction = "DELETE FROM comment " \
-                          "WHERE id in (" \
-                          "SELECT comment_id from course_comment WHERE course_id=%s" \
-                          ")"
-            cursor.execute(instruction, [course_id])
-            connection.commit()
+                      "WHERE id=%s"
+            cursor.execute(instruction, [i[0]])
+        print(1)
 
-            instruction = "DELETE FROM course " \
-                          "WHERE id=%s"
+        instruction = "SELECT student_id from student_course where course_id=%s"
+        cursor.execute(instruction, [course_id])
+        result = cursor.fetchall()
+        print(result)
+        for i in result:
+            instruction = "UPDATE student set count_course = count_course - 1" \
+                          " where id=%s"
+            cursor.execute(instruction, [i[0]])
 
-            cursor.execute(instruction, [course_id])
-            connection.commit()
-
-            self.closeDatabase(connection, cursor)
-        except Exception as e:
-            connection.rollback()
-            print("执行MySQL错误")
+        instruction = "DELETE FROM course " \
+                      "WHERE id=%s"
+        cursor.execute(instruction, [course_id])
+        connection.commit()
+        self.closeDatabase(connection, cursor)
         return
 
     def teacherPasswordChange(self, teacher_id, password):
@@ -830,6 +864,25 @@ class MySQL:
 
 if __name__ == "__main__":
     sql = MySQL()
+    result = sql.getCourseInfo(109)
+    CourseList = []
+    for item in result:
+        CourseList.append({'id': item[0], 'name': item[1], 'teacherName': item[2], 'introduction': item[5] if
+        item[5] is not None else '', 'materialList': [], 'm_id': item[3] if item[3] is not None else '',
+                           'm_name': item[4] if item[4] is not None else ''})
+    i = 0
+    while i < len(CourseList):
+        if CourseList[i]['m_id'] != '' and len(CourseList[i]['materialList']) == 0:
+            CourseList[i]['materialList'].append(
+                {'id': CourseList[i]['m_id'], 'name': CourseList[i]['m_name']});
+
+        if i != len(CourseList) - 1 and CourseList[i]['id'] == CourseList[i + 1]['id']:
+            CourseList[i]['materialList'].append(
+                {'id': CourseList[i + 1]['m_id'], 'name': CourseList[i + 1]['m_name']});
+            CourseList.pop(i + 1)
+            i -= 1
+        i += 1
+    print(CourseList[0])
     # r = sql.getPostTheme(42)
     # dic = {"id": r[0][0], "userName": r[1][0], "userNickName": r[1][1],
     #        "title": r[0][1], "content": r[0][2], "time": r[0][3],

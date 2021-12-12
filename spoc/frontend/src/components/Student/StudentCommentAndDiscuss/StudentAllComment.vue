@@ -27,45 +27,50 @@
                     circle></el-button>
                 </el-col>
               </el-row>
-              <el-card v-for="(course, index) in showCourseList" :key="index" shadow="hover" style="margin-bottom: 2%">
-                <el-row>
-                  <el-col :offset="1" :span="2">
+              <el-card
+                v-for="(course, index) in showCourseList" :key="index"
+                v-loading="loading"
+                shadow="hover"
+                style="font-size: small; margin-bottom: 2%;">
+                <div slot="header" class="clearfix">
+                  <el-col :span="2">
                     <el-image :src="courseImg" lazy></el-image>
                   </el-col>
-                  <el-col :offset="2" :span="18">
-                    <el-row>
-                      <el-col :span="18">
-                        <strong>{{course.name}}</strong>
-                      </el-col>
-                      <el-col :span="4" :offset="2">
-                        <el-button v-on:click="commentCourse(index)" type="text" style="float: right">查看</el-button>
-                      </el-col>
-                    </el-row>
-                    <el-row>
-                      <el-divider>
-                      </el-divider>
-                    </el-row>
-                    <el-row>
-                      <div style="font-size: 12px; text-overflow: ellipsis ;max-height: 100px; overflow: hidden; white-space: nowrap;">
-                        {{course.introduction}}
-                      </div>
-                    </el-row>
-                  </el-col>
-                </el-row>
+                  {{ course.name }}
+                  <el-button v-on:click="commentCourse(index)" type="text" style="font-size: smaller; float: right">
+                    进入评价
+                  </el-button>
+                  <el-rate
+                    v-model="course.avgDegree"
+                    disabled
+                    show-score
+                    text-color="#ff9900">
+                  </el-rate>
+                </div>
+                <div
+                  style="font-size: x-small; text-overflow: ellipsis ;max-height: 50px; overflow: hidden; white-space: nowrap;">
+                  <span v-html="course.introduction"></span>
+                </div>
               </el-card>
             </el-col>
             <el-col :span="8" :offset="2" class="right-information">
               <el-card shadow="hover" style="width: 100%">
                 <el-row>
-                  <el-col :span="12">
-                    <el-empty :image-size="80" style="margin: 0 !important; padding: 0 !important;"></el-empty>
+                  <el-col :span="2" >
+                    &nbsp;
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="6">
+                    <el-image :src="studentImg" lazy></el-image>
+                  </el-col>
+                  <el-col :span="2" >
+                    &nbsp;
+                  </el-col>
+                  <el-col :span="12" :offset="1">
                     <el-descriptions :column="1">
-                      <el-descriptions-item label="用户名">{{userNickName}}</el-descriptions-item>
-                      <el-descriptions-item label="学号">{{userName}}</el-descriptions-item>
-                      <el-descriptions-item label="已选课程">{{courseNum}}</el-descriptions-item>
-                      <el-descriptions-item label="参与评价">{{commentNum}}</el-descriptions-item>
+                      <el-descriptions-item label="用户名">{{ userNickName }}</el-descriptions-item>
+                      <el-descriptions-item label="学号">{{ userName }}</el-descriptions-item>
+                      <el-descriptions-item label="已选课程">{{ courseNum }}</el-descriptions-item>
+                      <el-descriptions-item label="参与评价">{{ commentNum }}</el-descriptions-item>
                     </el-descriptions>
                   </el-col>
                 </el-row>
@@ -74,8 +79,8 @@
                 </el-row>
                 <el-row>
                   <el-descriptions :column="1" v-if="showIt">
-                      <el-descriptions-item label="用户名">{{userNickName}}</el-descriptions-item>
-                      <el-descriptions-item label="学号">{{userName}}</el-descriptions-item>
+                    <el-descriptions-item label="用户名">{{ userNickName }}</el-descriptions-item>
+                    <el-descriptions-item label="学号">{{ userName }}</el-descriptions-item>
                   </el-descriptions>
                 </el-row>
                 <el-row class="el-row-button-head">
@@ -96,6 +101,9 @@
 <script>
 import StudentNav from '../StudentNav'
 import StudentHeading from '../StudentHeading'
+import StudentImg from '../../../assets/img/student.png'
+import CourseImg from '../../../assets/img/buaa_class_img.jpg'
+
 export default {
   name: 'StudentAllComment',
   components: {StudentNav, StudentHeading},
@@ -104,25 +112,32 @@ export default {
       loading: true,
       userName: '',
       userNickName: '',
-      commentNum: '1',
-      courseNum: '1',
+      commentNum: '',
+      courseNum: '',
+      courseImg: CourseImg,
+      studentImg: StudentImg,
       inputSearch: '',
       showIt: false,
-      url: '../../../assets/img/learning-hard.png',
       courseList: [{
-        id: '1',
-        name: '前端测试课程1',
-        introduction: '前端介绍测试1',
-        materialIdString: '1,2',
-        materialNameString: 'book1,book2'
-      }, {
-        id: '2',
-        name: '前端测试课程2',
-        introduction: '前端测试介绍2',
-        materialIdString: '1,2',
-        materialNameString: 'book1,book2'
+        id: '',
+        name: '',
+        introduction: '',
+        materialList: [{
+          id: '',
+          name: ''
+        }],
+        avgDegree: 3.0
       }],
-      showCourseList: this.courseList
+      showCourseList: [{
+        id: '',
+        name: '',
+        materialList: [{
+          id: '',
+          name: ''
+        }],
+        introduction: '',
+        avgDegree: 3.0
+      }]
     }
   },
   mounted: function () {
@@ -131,6 +146,7 @@ export default {
     this.getCourseList()
     this.getStudentCommentNum()
     this.getStudentCourseNum()
+    this.showCourseList = this.courseList
   },
   methods: {
     getStudentCourseNum: function () {
@@ -184,11 +200,7 @@ export default {
       this.$router.push({
         path: '/StudentCommentAndDiscuss/StudentComment',
         query: {
-          courseId: that.showCourseList[index].id,
-          courseName: that.showCourseList[index].name,
-          courseIntroduction: that.showCourseList[index].introduction,
-          // courseAssessment: that.courseList[index].courseAssessment,
-          courseMaterial: that.showCourseList[index].materialNameString
+          courseId: that.showCourseList[index].id
         }
       })
     },
@@ -224,14 +236,17 @@ export default {
 </script>
 
 <style scoped>
-  @import "../../../assets/css/back.css";
-  .el-row-button {
-    width: 100% !important;
-  }
-  .el-row-button :hover {
-    background-color: initial;
-  }
-  .el-row-button-head :hover {
-    background-color: hsla(0, 0%, 74%, 0.2);
-  }
+@import "../../../assets/css/back.css";
+
+.el-row-button {
+  width: 100% !important;
+}
+
+.el-row-button :hover {
+  background-color: initial;
+}
+
+.el-row-button-head :hover {
+  background-color: hsla(0, 0%, 74%, 0.2);
+}
 </style>
