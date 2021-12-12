@@ -29,8 +29,8 @@
               </el-row>
               <el-card v-for="(course, index) in showCourseList" :key="index" shadow="hover" style="margin-bottom: 2%">
                 <el-row>
-                  <el-col :offset="2" :span="2">
-                    <el-empty :image-size="50" style="margin: 0 !important; padding: 0 !important;"></el-empty>
+                  <el-col :offset="1" :span="2">
+                    <el-image :src="courseImg" lazy></el-image>
                   </el-col>
                   <el-col :offset="2" :span="18">
                     <el-row>
@@ -129,8 +129,40 @@ export default {
     this.userName = this.cookie.getCookie('userName')
     this.userNickName = this.cookie.getCookie('userNickName')
     this.getCourseList()
+    this.getStudentCommentNum()
+    this.getStudentCourseNum()
   },
   methods: {
+    getStudentCourseNum: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetStudentCourseNum/',
+        method: 'get',
+        params: {
+          userName: that.userName
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.courseNum = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    getStudentCommentNum: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetStudentCommentNum/',
+        method: 'get',
+        params: {
+          userName: that.userName
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.commentNum = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     getCourseList: function () {
       let that = this
       that.loading = true
@@ -153,7 +185,10 @@ export default {
         path: '/StudentCommentAndDiscuss/StudentComment',
         query: {
           courseId: that.showCourseList[index].id,
-          courseName: that.showCourseList[index].name
+          courseName: that.showCourseList[index].name,
+          courseIntroduction: that.showCourseList[index].introduction,
+          // courseAssessment: that.courseList[index].courseAssessment,
+          courseMaterial: that.showCourseList[index].materialNameString
         }
       })
     },

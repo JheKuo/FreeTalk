@@ -9,15 +9,6 @@
           <TeacherHeading></TeacherHeading>
         </el-header>
         <el-main style="padding-right: 10%; padding-left: 10%">
-<!--          <el-table :data="courseList"  v-loading="loading">-->
-<!--            <el-table-column label="课程ID" prop="id"></el-table-column>-->
-<!--            <el-table-column label="课程名称" prop="name"></el-table-column>-->
-<!--            <el-table-column label="查看评价">-->
-<!--              <template slot-scope="scope">-->
-<!--                <el-button v-on:click="commentCourse(scope.$index)" type="primary" size="small">查看评价</el-button>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--          </el-table>-->
           <el-row>
             <el-col :span="14" class="left-information" style="width: 50%">
               <el-row>
@@ -38,8 +29,8 @@
               </el-row>
               <el-card v-for="(course, index) in showCourseList" :key="index" shadow="hover" style="margin-bottom: 2%">
                 <el-row>
-                  <el-col :offset="2" :span="2">
-                    <el-empty :image-size="50" style="margin: 0 !important; padding: 0 !important;"></el-empty>
+                  <el-col :offset="1" :span="2">
+                    <el-image :src="courseImg" lazy></el-image>
                   </el-col>
                   <el-col :offset="2" :span="18">
                     <el-row>
@@ -60,6 +51,16 @@
                       </div>
                     </el-row>
                   </el-col>
+<!--                  <el-col :offset="1" :span="3">-->
+<!--                    <div><strong>评分</strong></div>-->
+<!--                    <el-rate-->
+<!--                      v-model="course.assessment"-->
+<!--                      disabled-->
+<!--                      show-score-->
+<!--                      text-color="#ff9900"-->
+<!--                      score-template="{course.assessment}">-->
+<!--                    </el-rate>-->
+<!--                  </el-col>-->
                 </el-row>
               </el-card>
             </el-col>
@@ -104,6 +105,7 @@
 <script>
 import TeacherNav from '../TeacherNav'
 import TeacherHeading from '../TeacherHeading'
+import CourseImg from '../../../assets/img/buaa_class_img.jpg'
 export default {
   name: 'TeacherAllComment',
   components: {TeacherNav, TeacherHeading},
@@ -115,16 +117,19 @@ export default {
       courseNum: '1',
       inputSearch: '',
       showIt: false,
+      courseImg: CourseImg,
       courseList: [{
         id: '1',
         name: '前端测试课程1',
         materialIdString: '1,2',
-        materialNameString: 'book1,book2'
+        materialNameString: 'book1,book2',
+        assessment: '5'
       }, {
         id: '2',
         name: '前端测试课程2',
         materialIdString: '1,2',
-        materialNameString: 'book1,book2'
+        materialNameString: 'book1,book2',
+        assessment: '5'
       }],
       showCourseList: this.courseList
     }
@@ -133,8 +138,24 @@ export default {
     this.userName = this.cookie.getCookie('userName')
     this.userNickName = this.cookie.getCookie('userNickName')
     this.getCourseList()
+    this.getTeacherCourseNum()
   },
   methods: {
+    getTeacherCourseNum: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetTeacherCourseNum/',
+        method: 'get',
+        params: {
+          userName: that.userName
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.courseNum = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     getCourseList: function () {
       let that = this
       that.loading = true
@@ -156,8 +177,11 @@ export default {
       this.$router.push({
         path: '/TeacherCommentAndDiscuss/TeacherComment',
         query: {
-          courseId: that.courseList[index].id,
-          courseName: that.courseList[index].name
+          courseId: that.showCourseList[index].id,
+          courseName: that.showCourseList[index].name,
+          courseIntroduction: that.showCourseList[index].introduction,
+          // courseAssessment: that.courseList[index].courseAssessment,
+          courseMaterial: that.showCourseList[index].materialNameString
         }
       })
     },

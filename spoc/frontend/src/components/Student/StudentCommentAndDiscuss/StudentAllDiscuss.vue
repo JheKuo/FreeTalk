@@ -73,7 +73,7 @@
                     <el-row style="margin-bottom: 10px">
                       <el-col>
 <!--                        <el-input v-model="input.content" placeholder="请输入贴子的主题" type="textarea" :rows="10"></el-input>-->
-                        <quill-editor ref="text" v-model="input.content" style="height: 400px"></quill-editor>
+                        <quill-editor ref="text" v-model="input.content" style="height: 300px"></quill-editor>
                       </el-col>
                     </el-row>
                     <div slot="footer" class="dialog-footer">
@@ -85,23 +85,6 @@
               </el-card>
             </el-col>
           </el-row>
-
-<!--          <el-table :data="postThemeList" v-loading="loading">-->
-<!--            <el-table-column label="主题贴ID" prop="id"></el-table-column>-->
-<!--            <el-table-column label="主题贴标题" prop="title"></el-table-column>-->
-<!--            <el-table-column label="发帖者" prop="isTeacher">-->
-<!--              <template slot-scope="scope">-->
-<!--                <span v-if="postThemeList[scope.$index].isTeacher === 0">学生</span>-->
-<!--                <span v-if="postThemeList[scope.$index].isTeacher === 1">教师</span>-->
-<!--                <span v-if="postThemeList[scope.$index].isTeacher === 2">管理员</span>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--            <el-table-column label="进入贴子">-->
-<!--              <template slot-scope="scope">-->
-<!--                <el-button v-on:click="enterPostTheme(scope.$index)" type="primary" size="small">进入</el-button>-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--          </el-table>-->
         </el-main>
       </el-container>
     </el-container>
@@ -175,8 +158,24 @@ export default {
     this.userName = this.cookie.getCookie('userName')
     this.userNickName = this.cookie.getCookie('userNickName')
     this.getPostThemeList()
+    this.getStudentDiscussNum()
   },
   methods: {
+    getStudentDiscussNum: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetStudentDisCussNum/',
+        method: 'get',
+        params: {
+          userName: that.userName
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.discussNum = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     getPostThemeList: function () {
       let that = this
       that.loading = true
@@ -222,6 +221,7 @@ export default {
           that.$message.success('创建成功')
           that.buildThemeVisible = false
           that.getPostThemeList()
+          that.getStudentDiscussNum()
           that.postThemeInput = {
             title: '',
             content: ''
@@ -238,6 +238,7 @@ export default {
       this.$router.push({
         name: 'StudentDiscuss',
         query: {
+          postThemeId: that.showPostThemeList[index].id,
           newPostTheme: {
             id: that.showPostThemeList[index].id,
             userName: that.showPostThemeList[index].userName,

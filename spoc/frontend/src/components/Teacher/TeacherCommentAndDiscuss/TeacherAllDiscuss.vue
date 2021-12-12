@@ -73,7 +73,7 @@
                     <el-row style="margin-bottom: 10px">
                       <el-col>
 <!--                        <el-input v-model="input.content" placeholder="请输入贴子的主题" type="textarea" :rows="10"></el-input>-->
-                        <quill-editor ref="text" v-model="input.content" style="height: 400px"></quill-editor>
+                        <quill-editor ref="text" v-model="input.content" style="height: 300px"></quill-editor>
                       </el-col>
                     </el-row>
                     <div slot="footer" class="dialog-footer">
@@ -190,8 +190,24 @@ export default {
     this.userName = this.cookie.getCookie('userName')
     this.userNickName = this.cookie.getCookie('userNickName')
     this.getPostThemeList()
+    this.getTeacherDiscussNum()
   },
   methods: {
+    getTeacherDiscussNum: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetTeacherDiscussNum/',
+        method: 'get',
+        params: {
+          userName: that.userName
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.discussNum = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     getPostThemeList: function () {
       let that = this
       that.loading = true
@@ -219,7 +235,7 @@ export default {
       this.time = yyyy + '-' + MM + '-' + dd + ' ' + h + ':' + m + ':' + s
     },
     buildPostTheme: function () {
-      this.buildThemeVisible = false
+      // this.buildThemeVisible = false
       let that = this
       that.getTime()
       this.$http.request({
@@ -237,6 +253,7 @@ export default {
         if (response.data === 0) {
           that.$message.success('创建成功')
           that.buildThemeVisible = false
+          that.getTeacherDiscussNum()
           that.getPostThemeList()
           that.postThemeInput = {
             title: '',
@@ -254,6 +271,7 @@ export default {
       this.$router.push({
         name: 'TeacherDiscuss',
         query: {
+          postThemeId: that.showPostThemeList[index].id,
           newPostTheme: {
             id: that.showPostThemeList[index].id,
             userName: that.showPostThemeList[index].userName,

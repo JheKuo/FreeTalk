@@ -13,8 +13,20 @@
           </el-page-header>
           <el-card shadow="hover" style="margin-bottom: 2%">
             <el-row>
-              <el-col :offset="2" :span="2">
-                <el-empty :image-size="100" style="margin: 0 !important; padding: 0 !important;"></el-empty>
+              <el-col :offset="1" :span="2">
+                <el-row>
+                  <el-image :src="courseImg" lazy></el-image>
+                </el-row>
+<!--                <el-row>-->
+<!--                  <div><strong>评分</strong></div>-->
+<!--                  <el-rate-->
+<!--                    v-model="courseAssessment"-->
+<!--                    disabled-->
+<!--                    show-score-->
+<!--                    text-color="#ff9900"-->
+<!--                    score-template="{courseAssessment}">-->
+<!--                  </el-rate>-->
+<!--                </el-row>-->
               </el-col>
               <el-col :offset="2" :span="18">
                 <el-row>
@@ -29,9 +41,9 @@
                 <el-row>
                   <div style="font-size: 12px">
                     <h4>课程概述</h4>
-                    <p>这里是标题</p>
+                    <p>{{courseIntroduction}}</p>
                     <h4>课程资料</h4>
-                    <p>这里是所有的资料</p>
+                    <p>{{courseMaterial}}</p>
                   </div>
                 </el-row>
               </el-col>
@@ -96,6 +108,7 @@
 <script>
 import TeacherNav from '../TeacherNav'
 import TeacherHeading from '../TeacherHeading'
+import CourseImg from '../../../assets/img/buaa_class_img.jpg'
 export default {
   name: 'TeacherComment',
   components: {TeacherNav, TeacherHeading},
@@ -105,7 +118,11 @@ export default {
       userNickName: '前端测试姓名',
       courseId: '前端测试课程id',
       courseName: '前端测试课程名称',
+      courseIntroduction: '前端测试课程介绍',
+      courseAssessment: '5',
+      courseMaterial: '前端测试学习资料',
       contentInput: '',
+      courseImg: CourseImg,
       time: '',
       commentList: [{
         id: 1,
@@ -122,6 +139,9 @@ export default {
     this.userNickName = this.cookie.getCookie('userNickName')
     this.courseId = this.$route.query.courseId
     this.courseName = this.$route.query.courseName
+    this.courseIntroduction = this.$route.query.courseIntroduction
+    // this.courseAssessment = this.$route.query.courseAssessment
+    this.courseMaterial = this.$route.query.courseMaterial
     this.getCommentList()
   },
   methods: {

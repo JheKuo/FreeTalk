@@ -53,7 +53,7 @@
                 {{post.userNickName}}({{post.userName}}) (教师) :
               </div>
               <div v-else-if="post.isTeacher === 2">
-                {{postTheme.userNickName}}({{postTheme.userName}}) (管理员) :
+                {{post.userNickName}}({{post.userName}}) (管理员) :
               </div>
               <div v-else>
                 {{post.userNickName}}({{post.userName}}) :
@@ -105,6 +105,7 @@ export default {
     return {
       userName: '前端测试用户名',
       userNickName: '前端测试姓名',
+      postThemeId: 0,
       postTheme: {
         id: '测试id',
         userName: 'admin',
@@ -167,9 +168,26 @@ export default {
     this.userName = this.cookie.getCookie('userName')
     this.userNickName = this.cookie.getCookie('userNickName')
     this.postTheme = this.$route.query.postTheme
+    this.postThemeId = this.$route.query.postThemeId
+    this.getPostTheme()
     this.getPostList()
   },
   methods: {
+    getPostTheme: function () {
+      let that = this
+      this.$http.request({
+        url: that.$url + 'GetPostTheme/',
+        method: 'get',
+        params: {
+          postThemeId: that.postThemeId
+        }
+      }).then(function (response) {
+        console.log(response.data)
+        that.postTheme = response.data
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     getTime: function () {
       let that = this
       let dt = new Date()
@@ -214,7 +232,7 @@ export default {
         url: that.$url + 'GetPostList/',
         method: 'get',
         params: {
-          postThemeId: that.postTheme.id
+          postThemeId: that.postThemeId
         }
       }).then(function (response) {
         console.log(response.data)
