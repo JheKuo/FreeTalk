@@ -1,7 +1,6 @@
 #  BUAA DB
 
-2021年秋北航数据库大作业
-
+2021. Database Project. FreeTalk Course Forum.
 
 ## Description [![](https://img.shields.io/badge/frontend-Vue.js-9cf)](https://vuejs.org/)   [![](https://img.shields.io/badge/backend-Django-96d6d1)](https://www.djangoproject.com/)  [![](https://img.shields.io/badge/UI%20Toolkit-Element-3F93B3)](https://element.eleme.io/)
 
