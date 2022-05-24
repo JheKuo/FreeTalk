@@ -6,7 +6,7 @@
 
 FreeTalk课程平台，实现了学生选、退课，查看课程信息，课程评论，课程评分，论坛讨论；教师开设、关闭、修改课程，添加、删除学习资料，关联课程和学习资料，发布通知，查看课程评论评分；管理员统筹所有信息，发布公告等功能。
 
-### build and run：
+## Quick Start：
 
 ```shell
 $ cd spoc
@@ -111,7 +111,7 @@ grade() //打分
 [@fangzhou0216][tqj], [@Mike-Smith-rem][oyk], [@imingx][gmm].
 
 <a href="https://github.com/imingx/freetalk/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=imingx/freetalk&columns=34&max=500" width="5%">
+  <img src="https://contrib.rocks/image?repo=imingx/freetalk&columns=34&max=500" width="70px">
 </a>
 
 <!-- <a href="https://github.com/imingx/freetalk/graphs/contributors">
