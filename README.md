@@ -110,6 +110,11 @@ grade() //打分
 
 [@fangzhou0216][tqj], [@Mike-Smith-rem][oyk], [@imingx][gmm].
 
+<a href="https://github.com/imingx/freetalk/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=imingx/freetalk&columns=34&max=500" />
+</a>
+
+
 ## License
 
 [MIT](./LICENSE)
