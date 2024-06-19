@@ -123,6 +123,6 @@ grade() //打分
 [MIT](./LICENSE)
 
 
-[tqj]: https://github.com/fangzhou0216
+[tqj]: https://github.com/fangzhou2000
 [oyk]: https://github.com/Mike-Smith-rem
 [gmm]: https://github.com/imingx
