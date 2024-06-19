@@ -108,7 +108,7 @@ grade() //打分
 
 ## Team
 
-[@fangzhou0216][tqj], [@Mike-Smith-rem][oyk], [@imingx][gmm].
+[@fangzhou2000][tqj], [@Mike-Smith-rem][oyk], [@imingx][gmm].
 
 <a href="https://github.com/imingx/freetalk/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=imingx/freetalk&columns=34&max=500" width="70px">
