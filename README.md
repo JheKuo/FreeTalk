@@ -1,4 +1,4 @@
-#  BUAA DB
+#  DB
 
 2021 Database Project. FreeTalk Course Forum.
 
