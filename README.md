@@ -8,6 +8,8 @@ FreeTalk课程平台，实现了学生选、退课，查看课程信息，课程
 
 ## Quick Start
 
+Pre-install [database](./spoc/database.sql)
+
 ```shell
 $ cd spoc
 $ python manage.py runserver
